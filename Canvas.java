@@ -26,6 +26,7 @@ public class Canvas extends JPanel{
 		setBackground(Color.WHITE);
 		
 		setPreferredSize(new Dimension(400, 400));
+		setLayout(new BorderLayout());
 		setVisible(true);
 		//setLayout(new BorderLayout());
 		

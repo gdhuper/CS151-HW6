@@ -1,11 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -43,43 +46,52 @@ public class Whiteboard extends JFrame{
 		frame.setTitle("Whiteboard");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
-		Canvas c = new Canvas();
 		
+		Canvas c = new Canvas(); //Creating the canvas in main frame
 		
-		//Menu bar
+		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
+		
+		//***********Menu bar**********//
 		JMenuBar menu = new JMenuBar();
 		JMenu fileMenu = new JMenu("File");
 		menu.add(fileMenu);
 		menu.setVisible(true);
 		setJMenuBar(menu);
 		//********************************//
-		
-		controls.setLayout(new BorderLayout());
-		
-		
-		JPanel setColor = new JPanel();
-		//setColor.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
-		JButton setColr = new JButton("Set Color");
-		setColor.add(setColr);
+				
 		
 		
 		
 		
 		//Adding components to controls Panel 
-		createAddButtons();
-		controls.add(setColor);
-		selectFont();
-		createActionButtons();
-		createTable();
+		controls.add(Box.createRigidArea(new Dimension(0,10))); //Add rigid areas between two components
+
+		createAddButtons(); //method call to create  add buttons
+		controls.add(Box.createRigidArea(new Dimension(0,30)));
+
+		setColor();   //method call to create set color button in control panel
+		controls.add(Box.createRigidArea(new Dimension(0,30)));
+
+		selectFont(); //To create the set font button
+		controls.add(Box.createRigidArea(new Dimension(0,30)));
+
+		createActionButtons(); //To create the action buttons
+		controls.add(Box.createRigidArea(new Dimension(0,50)));
+
+		createTable();  //Creates a table to display statistics
+		//*********************************************************************************************//
 		
 		
 		
-		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
-		frame.add(controls);
 		
+		for (Component comp : controls.getComponents()) { 
+			 ((JComponent) comp).setAlignmentX(Box.LEFT_ALIGNMENT);
+		}
 		
+		//Adding components to the main frame
 		
-		frame.add(c, BorderLayout.EAST);
+		frame.add(controls, BorderLayout.WEST);
+		frame.add(c);
 		frame.pack();
 		c.setSize(400, 400);
 		frame.setSize(900, 600);
@@ -89,10 +101,10 @@ public class Whiteboard extends JFrame{
 }
 	public void createAddButtons()
 	{
-		//Add shapes button
+				//Add shapes button
 				JPanel addButtons = new JPanel();
-				addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
-				
+				addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.LINE_AXIS));
+				addButtons.add(Box.createRigidArea(new Dimension(0, 5)));
 				JLabel add = new JLabel("Add");
 				add.setBackground(Color.RED);;
 				
@@ -103,58 +115,100 @@ public class Whiteboard extends JFrame{
 				
 				
 				//Add buttons
+				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
+
 				addButtons.add(add);
+				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
+
 				addButtons.add(rect);
+				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
+
 				addButtons.add(oval);
+				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
+
 				addButtons.add(line);
+				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
+
 				addButtons.add(text);
+				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
+
 				//Add buttons
 				
+				
 				controls.add(addButtons);
+				
 		
+	}
+	public void setColor()
+	{
+		JPanel setColor = new JPanel();
+		setColor.setLayout(new BoxLayout(setColor, BoxLayout.LINE_AXIS));
+		JButton setColr = new JButton("Set Color");
+		setColor.add(Box.createRigidArea(new Dimension(5,0)));
+
+		setColor.add(setColr);
+		controls.add(setColor);
+
+		
+	}
+	public void selectFont()
+	{
+		//Edwardian script stuff
+				JPanel script = new JPanel();
+				script.setLayout(new BoxLayout(script, BoxLayout.LINE_AXIS));
+				
+				JTextField textField = new JTextField("WhiteBoard!");
+				JButton scriptButton = new JButton("Edwardian Script");
+				script.add(Box.createRigidArea(new Dimension(5,0)));
+
+				script.add(textField);
+				script.add(Box.createRigidArea(new Dimension(30,0)));
+
+				script.add(scriptButton);
+				controls.add(script);
 	}
 	
 	public void createActionButtons()
 	{
 		JPanel actionButtons = new JPanel();
-		actionButtons.setLayout(new FlowLayout());
+		actionButtons.setLayout(new BoxLayout(actionButtons, BoxLayout.LINE_AXIS));
 		
 		JButton moveToFront = new JButton("Move To Front");
 		JButton moveToBack = new JButton("Move To Back");
 		JButton removeShape = new JButton("Remove Shape");
 		
+		actionButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+
 		actionButtons.add(moveToFront);
+		actionButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+
 		actionButtons.add(moveToBack);
+		actionButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+
 		actionButtons.add(removeShape);
+		actionButtons.add(Box.createRigidArea(new Dimension(5, 0)));
+
 		
 		controls.add(actionButtons);
 
 	}
 	
-	public void selectFont()
-	{
-		//Edwardian script stuff
-				JPanel script = new JPanel();
-				//script.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
-				JTextField textField = new JTextField("WhiteBoard!");
-				JButton scriptButton = new JButton("Edwardian Script");
-				script.add(textField);
-				script.add(scriptButton);
-				controls.add(script);
-	}
+
 	
 	public void createTable()
 	{
+		
+		JPanel dataTable = new JPanel();
 		String[] col = {"X", "Y", "Width", "Height"};
 		//DefaultTableModel model = new DefaultTableModel();
-		//model.setColumnIdentifiers(col);
+		//model.setColumnIdentifiers(col); 
 		TableModel dataModel = new AbstractTableModel() {
 	          public int getColumnCount() { return 4; }
 	          public String getColumnName(int index)
 	          {
-	        	  return col[index];
+	        	  return col[index]; 
 	          }
-	          public int getRowCount() { return 10;}
+	          public int getRowCount() { return 30;}
 	          public Object getValueAt(int row, int col)
 	          { 
 	        	  return ""; 
@@ -162,10 +216,10 @@ public class Whiteboard extends JFrame{
 	      };
 	     JTable table = new JTable(dataModel);
 	      JScrollPane scrollpane = new JScrollPane(table);
-	      controls.add(scrollpane);
+	      dataTable.add(scrollpane);
 	      
 	      table.setFillsViewportHeight(true);
-
+	      controls.add(scrollpane);
 	}
 	
 	
