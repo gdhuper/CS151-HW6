@@ -18,7 +18,7 @@ import javax.swing.border.Border;
 
 public class Whiteboard extends JFrame{
 	
-	
+	public JPanel controls = new JPanel();
 	
 	public static void main(String[] args)
 	{
@@ -43,20 +43,10 @@ public class Whiteboard extends JFrame{
 		
 		
 		//The controls Jpanel
-		JPanel controls = new JPanel();
+		//JPanel controls = new JPanel();
 		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		
-		//Add shapes button
-		JPanel addButtons = new JPanel();
-		addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
 		
-		JLabel add = new JLabel("Add");
-		add.setBackground(Color.RED);;
-		
-		JButton rect = new JButton("Rect");
-		JButton oval = new JButton("Oval");
-		JButton line = new JButton("Line");
-		JButton text = new JButton("Text");
 		
 		JPanel setColor = new JPanel();
 		//setColor.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
@@ -71,33 +61,17 @@ public class Whiteboard extends JFrame{
 		script.add(textField);
 		script.add(scriptButton);
 		
-		JPanel actionButtons = new JPanel();
-		actionButtons.setLayout(new FlowLayout());
+
+
 		
-		JButton moveToFront = new JButton("Move To Front");
-		JButton moveToBack = new JButton("Move To Back");
-		JButton removeShape = new JButton("Remove Shape");
-		
-		actionButtons.add(moveToFront);
-		actionButtons.add(moveToBack);
-		actionButtons.add(removeShape);
+	
 
 		
 		
-		//Add buttons
-		addButtons.add(add);
-		addButtons.add(rect);
-		addButtons.add(oval);
-		addButtons.add(line);
-		addButtons.add(text);
-		//Add buttons
-
-		
-		
-		controls.add(addButtons);
+		createAddButtons();
 		controls.add(setColor);
 		controls.add(script);
-		controls.add(actionButtons);
+		createActionButtons();
 		
 		
 		
@@ -123,4 +97,49 @@ public class Whiteboard extends JFrame{
 		frame.setVisible(true);
 
 }
+	public void createAddButtons()
+	{
+		//Add shapes button
+				JPanel addButtons = new JPanel();
+				addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
+				
+				JLabel add = new JLabel("Add");
+				add.setBackground(Color.RED);;
+				
+				JButton rect = new JButton("Rect");
+				JButton oval = new JButton("Oval");
+				JButton line = new JButton("Line");
+				JButton text = new JButton("Text");
+				
+				
+				//Add buttons
+				addButtons.add(add);
+				addButtons.add(rect);
+				addButtons.add(oval);
+				addButtons.add(line);
+				addButtons.add(text);
+				//Add buttons
+				
+				controls.add(addButtons);
+		
+	}
+	
+	public void createActionButtons()
+	{
+		JPanel actionButtons = new JPanel();
+		actionButtons.setLayout(new FlowLayout());
+		
+		JButton moveToFront = new JButton("Move To Front");
+		JButton moveToBack = new JButton("Move To Back");
+		JButton removeShape = new JButton("Remove Shape");
+		
+		actionButtons.add(moveToFront);
+		actionButtons.add(moveToBack);
+		actionButtons.add(removeShape);
+		
+		controls.add(actionButtons);
+
+	}
+	
+	
 }
