@@ -12,8 +12,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
 
 public class Whiteboard extends JFrame{
@@ -41,11 +46,15 @@ public class Whiteboard extends JFrame{
 		Canvas c = new Canvas();
 		
 		
+		//Menu bar
+		JMenuBar menu = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		menu.add(fileMenu);
+		menu.setVisible(true);
+		setJMenuBar(menu);
+		//********************************//
 		
-		//The controls Jpanel
-		//JPanel controls = new JPanel();
-		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
-		
+		controls.setLayout(new BorderLayout());
 		
 		
 		JPanel setColor = new JPanel();
@@ -53,42 +62,23 @@ public class Whiteboard extends JFrame{
 		JButton setColr = new JButton("Set Color");
 		setColor.add(setColr);
 		
-		//Edwardian script stuff
-		JPanel script = new JPanel();
-		//script.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
-		JTextField textField = new JTextField("WhiteBoard!");
-		JButton scriptButton = new JButton("Edwardian Script");
-		script.add(textField);
-		script.add(scriptButton);
-		
-
-
-		
-	
-
 		
 		
+		
+		//Adding components to controls Panel 
 		createAddButtons();
 		controls.add(setColor);
-		controls.add(script);
+		selectFont();
 		createActionButtons();
+		createTable();
 		
 		
 		
-		
-		
+		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		frame.add(controls);
 		
 		
 		
-
-		
-		JMenuBar menu = new JMenuBar();
-		
-		JMenu fileMenu = new JMenu("File");
-		menu.add(fileMenu);
-		menu.setVisible(true);
-		setJMenuBar(menu);
 		frame.add(c, BorderLayout.EAST);
 		frame.pack();
 		c.setSize(400, 400);
@@ -138,6 +128,43 @@ public class Whiteboard extends JFrame{
 		actionButtons.add(removeShape);
 		
 		controls.add(actionButtons);
+
+	}
+	
+	public void selectFont()
+	{
+		//Edwardian script stuff
+				JPanel script = new JPanel();
+				//script.setLayout(new BoxLayout(addButtons, BoxLayout.X_AXIS));
+				JTextField textField = new JTextField("WhiteBoard!");
+				JButton scriptButton = new JButton("Edwardian Script");
+				script.add(textField);
+				script.add(scriptButton);
+				controls.add(script);
+	}
+	
+	public void createTable()
+	{
+		String[] col = {"X", "Y", "Width", "Height"};
+		//DefaultTableModel model = new DefaultTableModel();
+		//model.setColumnIdentifiers(col);
+		TableModel dataModel = new AbstractTableModel() {
+	          public int getColumnCount() { return 4; }
+	          public String getColumnName(int index)
+	          {
+	        	  return col[index];
+	          }
+	          public int getRowCount() { return 10;}
+	          public Object getValueAt(int row, int col)
+	          { 
+	        	  return ""; 
+	        }
+	      };
+	     JTable table = new JTable(dataModel);
+	      JScrollPane scrollpane = new JScrollPane(table);
+	      controls.add(scrollpane);
+	      
+	      table.setFillsViewportHeight(true);
 
 	}
 	
