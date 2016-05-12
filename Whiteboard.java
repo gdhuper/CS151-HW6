@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -14,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -27,19 +30,27 @@ import javax.swing.table.TableModel;
 public class Whiteboard extends JFrame{
 	
 	public JPanel controls = new JPanel();
+	Canvas c;
 	
+	/**
+	 * Main method to launch the whiteboard
+	 */
 	public static void main(String[] args)
 	{
 		Whiteboard w = new Whiteboard();
 	}
 	
-	
+	/**
+	 * Constructs an default whiteboard 
+	 */
 	public Whiteboard() 
 		{
 		
 		showGUI();
 		}
-	
+	/**
+	 * Method to create the main GUI of the Whiteboard
+	 */
 	private void showGUI() {
 	
 		JFrame frame = new JFrame("Whiteboard");
@@ -47,7 +58,7 @@ public class Whiteboard extends JFrame{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
-		Canvas c = new Canvas(); //Creating the canvas in main frame
+		 c = new Canvas(); //Creating the canvas in main frame
 		
 		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		
@@ -63,7 +74,7 @@ public class Whiteboard extends JFrame{
 		
 		
 		
-		//Adding components to controls Panel 
+		//************************Adding components to controls Panel********************************// 
 		controls.add(Box.createRigidArea(new Dimension(0,10))); //Add rigid areas between two components
 
 		createAddButtons(); //method call to create  add buttons
@@ -83,7 +94,7 @@ public class Whiteboard extends JFrame{
 		
 		
 		
-		
+		// To align all the components to the left 
 		for (Component comp : controls.getComponents()) { 
 			 ((JComponent) comp).setAlignmentX(Box.LEFT_ALIGNMENT);
 		}
@@ -99,6 +110,9 @@ public class Whiteboard extends JFrame{
 		frame.setVisible(true);
 
 }
+	/**
+	 * Helper methods to create the add buttons in the main gui
+	 */
 	public void createAddButtons()
 	{
 				//Add shapes button
@@ -109,6 +123,15 @@ public class Whiteboard extends JFrame{
 				add.setBackground(Color.RED);;
 				
 				JButton rect = new JButton("Rect");
+				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
+					 public void actionPerformed(ActionEvent ae) { 
+						 
+						
+						           
+						 }
+
+					        
+					 });
 				JButton oval = new JButton("Oval");
 				JButton line = new JButton("Line");
 				JButton text = new JButton("Text");
@@ -118,6 +141,7 @@ public class Whiteboard extends JFrame{
 				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
 
 				addButtons.add(add);
+				
 				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
 
 				addButtons.add(rect);
@@ -139,6 +163,9 @@ public class Whiteboard extends JFrame{
 				
 		
 	}
+	/**
+	 * Helper method to create set color button in main GUI
+	 */
 	public void setColor()
 	{
 		JPanel setColor = new JPanel();
@@ -151,6 +178,10 @@ public class Whiteboard extends JFrame{
 
 		
 	}
+	
+	/**
+	 * Helper method to create font button on main gui
+	 */
 	public void selectFont()
 	{
 		//Edwardian script stuff
@@ -168,6 +199,10 @@ public class Whiteboard extends JFrame{
 				controls.add(script);
 	}
 	
+	
+	/**
+	 * Helper method to create action buttons in the GUI
+	 */
 	public void createActionButtons()
 	{
 		JPanel actionButtons = new JPanel();
@@ -194,7 +229,10 @@ public class Whiteboard extends JFrame{
 	}
 	
 
-	
+	/**
+	 * Helper method to create a table on control panel in main gui.
+	 * The table is going to be used for displaying shapes' statistics. 
+	 */
 	public void createTable()
 	{
 		
