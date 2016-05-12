@@ -93,7 +93,9 @@ public class Canvas extends JPanel implements MouseListener{
 	 */
 	public void paintComponent(Graphics g)
 	{
+		
 		super.paintComponent(g);
+		this.setOpaque(true);
 		if(buttonRect == true)
 		{
 		g.drawRect(10, 10, 50, 50);

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JColorChooser;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -134,7 +135,7 @@ public class Whiteboard extends JFrame{
 						 
 						
 						           
-						 }
+						 	}
 
 					        
 					 });
@@ -208,6 +209,20 @@ public class Whiteboard extends JFrame{
 		JPanel setColor = new JPanel();
 		setColor.setLayout(new BoxLayout(setColor, BoxLayout.LINE_AXIS));
 		JButton setColr = new JButton("Set Color");
+		setColr.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
+			 public void actionPerformed(ActionEvent e) { 
+				 Color c = JColorChooser.showDialog(null, "Pick a Color", Color.WHITE);
+			     if(c != null)
+			     {
+			    	 //set the color of the shape
+			     }
+			 
+							 }
+
+						        
+						 });
+					
+		
 		setColor.add(Box.createRigidArea(new Dimension(5,0)));
 
 		setColor.add(setColr);

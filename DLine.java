@@ -1,4 +1,18 @@
+import java.awt.Color;
+import java.awt.Graphics;
 
-public class DLine extends DShape  {
 
+class DLine extends DShape{
+	
+	public DLine()
+	{
+		super();
+	}
+	
+	
+	public void draw(Graphics g)
+	{
+		g.drawLine(10, 10, 20, 20);
+		g.setColor(Color.CYAN);
+	}
 }
