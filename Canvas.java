@@ -56,7 +56,7 @@ public class Canvas extends JPanel implements MouseListener{
 		g.setColor(Color.GRAY);
 		
 		g.fillRect(10, 10, 100, 100);
-		}
+	}
 		
 	}
 	

@@ -130,7 +130,8 @@ public class Whiteboard extends JFrame{
 				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
 						 c.setButton();
-						 c.paintComponent(g);
+						 c.repaint();
+						
 						           
 						 }
 
