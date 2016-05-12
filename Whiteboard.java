@@ -34,6 +34,7 @@ public class Whiteboard extends JFrame{
 	Canvas c;
 	Graphics g;
 	
+	
 	/**
 	 * Main method to launch the whiteboard
 	 */
@@ -118,6 +119,7 @@ public class Whiteboard extends JFrame{
 	public void createAddButtons()
 	{
 				//Add shapes button
+				
 				JPanel addButtons = new JPanel();
 				addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.LINE_AXIS));
 				addButtons.add(Box.createRigidArea(new Dimension(0, 5)));
@@ -127,8 +129,8 @@ public class Whiteboard extends JFrame{
 				JButton rect = new JButton("Rect");
 				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
-						 
-						c.paintComponent(g);
+						 c.setButton();
+						 c.paintComponent(g);
 						           
 						 }
 

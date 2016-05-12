@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 
 public class Canvas extends JPanel implements MouseListener{
 	
-	
+	public boolean buttonPressed = false;
 	
 	public Canvas()
 	{
@@ -39,15 +39,25 @@ public class Canvas extends JPanel implements MouseListener{
 		
 	}
 	
+	public void setButton()
+	{
+		 buttonPressed = true;
+	}
+	
 	/**
 	 * Override the paint component to draw the shape.
 	 */
 	public void paintComponent(Graphics g)
 	{
-		//super.paintComponent(g);
+		super.paintComponent(g);
+		if(buttonPressed == true)
+		{
 		g.drawRect(10, 10, 100, 100);
-		g.setColor(Color.RED);
+		g.setColor(Color.GRAY);
+		
 		g.fillRect(10, 10, 100, 100);
+		}
+		
 	}
 	
 	
