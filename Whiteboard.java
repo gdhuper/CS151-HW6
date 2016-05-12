@@ -129,8 +129,9 @@ public class Whiteboard extends JFrame{
 				JButton rect = new JButton("Rect");
 				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
-						 c.setButton();
+						 c.setRect();
 						 c.repaint();
+						 
 						
 						           
 						 }
@@ -138,8 +139,39 @@ public class Whiteboard extends JFrame{
 					        
 					 });
 				JButton oval = new JButton("Oval");
+				 oval.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DOval
+					 public void actionPerformed(ActionEvent e) { 
+						 c.setOval();
+						 c.repaint();
+						
+						           
+						 }
+
+					        
+					 });
 				JButton line = new JButton("Line");
+				 line.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DLine
+					 public void actionPerformed(ActionEvent e) { 
+						 c.setLine();
+						 c.repaint();
+						
+						           
+						 }
+
+					        
+					 });
 				JButton text = new JButton("Text");
+				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
+					 public void actionPerformed(ActionEvent e) { 
+						 c.setText();
+						 c.repaint();
+						 
+						
+						           
+						 }
+
+					        
+					 });
 				
 				
 				//Add buttons

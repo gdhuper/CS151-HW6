@@ -5,13 +5,21 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 
 
 public class Canvas extends JPanel implements MouseListener{
 	
-	public boolean buttonPressed = false;
+	 boolean buttonRect = false;
+	 boolean buttonOval = false;
+	 boolean buttonLine = false;
+	 boolean buttonText = false;
+	
+	 ArrayList<DShape> list = new ArrayList<DShape>();
+
+	
 	
 	public Canvas()
 	{
@@ -39,9 +47,45 @@ public class Canvas extends JPanel implements MouseListener{
 		
 	}
 	
-	public void setButton()
+	public void addToList(DShape s) // connect with the drawwing 
 	{
-		 buttonPressed = true;
+		list.add(s);
+	}
+	
+	
+	public void setRect()
+	{
+		 buttonRect = true;
+	}
+	public void setRectF()
+	{
+		 buttonRect = false;
+	}
+	public void setOval()
+	{
+		 buttonOval = true;
+	
+	}
+	public void setOvalF()
+	{
+		 buttonOval = false;
+	
+	}
+	public void setLine()
+	{
+		 buttonLine = true;
+	}
+	public void setLineF()
+	{
+		 buttonLine = false;
+	}
+	public void setText()
+	{
+		 buttonText = true;
+	}
+	public void setTextF()
+	{
+		 buttonText = false;
 	}
 	
 	/**
@@ -50,13 +94,34 @@ public class Canvas extends JPanel implements MouseListener{
 	public void paintComponent(Graphics g)
 	{
 		super.paintComponent(g);
-		if(buttonPressed == true)
+		if(buttonRect == true)
 		{
-		g.drawRect(10, 10, 100, 100);
-		g.setColor(Color.GRAY);
+		g.drawRect(10, 10, 50, 50);
+		g.setColor(Color.CYAN);
 		
-		g.fillRect(10, 10, 100, 100);
-	}
+		g.fillRect(10, 10, 50,50);
+		setRectF();
+		}
+	 if(buttonOval == true)
+		{
+			g.drawOval(10, 10, 50, 50);
+			
+			g.setColor(Color.YELLOW);
+			g.fillOval(10, 10, 50, 50);
+			setOvalF();
+		}
+	 if(buttonLine == true)
+		{
+			g.drawLine(10, 10, 50, 50);
+			g.setColor(Color.BLUE);
+			setLineF();
+		
+		}
+	// if(buttonText = true)
+	 //{
+	//	 g.drawString("WhiteBoard", 30, 30);
+	//	 setTextF();
+	 //}
 		
 	}
 	
