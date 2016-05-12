@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,6 +32,7 @@ public class Whiteboard extends JFrame{
 	
 	public JPanel controls = new JPanel();
 	Canvas c;
+	Graphics g;
 	
 	/**
 	 * Main method to launch the whiteboard
@@ -68,7 +70,7 @@ public class Whiteboard extends JFrame{
 		menu.add(fileMenu);
 		menu.setVisible(true);
 		setJMenuBar(menu);
-		//********************************//
+		//*****************************//
 				
 		
 		
@@ -124,9 +126,9 @@ public class Whiteboard extends JFrame{
 				
 				JButton rect = new JButton("Rect");
 				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
-					 public void actionPerformed(ActionEvent ae) { 
+					 public void actionPerformed(ActionEvent e) { 
 						 
-						
+						c.paintComponent(g);
 						           
 						 }
 

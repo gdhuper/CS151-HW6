@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -37,8 +38,19 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		
 	}
-
-
+	
+	/**
+	 * Override the paint component to draw the shape.
+	 */
+	public void paintComponent(Graphics g)
+	{
+		//super.paintComponent(g);
+		g.drawRect(10, 10, 100, 100);
+		g.setColor(Color.RED);
+		g.fillRect(10, 10, 100, 100);
+	}
+	
+	
 
 
 	@Override
