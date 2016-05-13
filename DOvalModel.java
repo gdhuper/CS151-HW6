@@ -1,4 +1,12 @@
 
-public class DOvalModel {
+public class DOvalModel extends DShapeModel{
+	
+	
+	public DOvalModel()
+	{
+		super();
+	}
+	
+	
 
 }

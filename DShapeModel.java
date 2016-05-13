@@ -6,16 +6,19 @@ public class DShapeModel {
 	
 	private int X;
 	private int Y;
-	Graphics g;
+	private int width;
+	private int height;
+	
+	private Color c;
 	
 	
 	public DShapeModel()
 	{
 		this.X = 0;
 		this.Y = 0;
-		g.setColor(Color.GRAY);
-		
-		
+		this.width = 0;
+		this.height = 0; 
+		this.c = Color.GRAY;		
 	}
 
 	public int getX() {
@@ -23,8 +26,8 @@ public class DShapeModel {
 	}
 
 
-	public void setX(int x) {
-		X = x;
+	public void setX(int newX) {
+		X = newX;
 	}
 
 
@@ -33,18 +36,18 @@ public class DShapeModel {
 	}
 
 
-	public void setY(int y) {
-		Y = y;
+	public void setY(int newY) {
+		Y = newY;
 	}
 
 
-	public Graphics getG() {
-		return g;
+	public Color getG() {
+		return c;
 	}
 
 
-	public void setG(Graphics g) {
-		this.g = g;
+	public void setG(Color newC) {
+		this.c = newC;
 	}
 	
 	

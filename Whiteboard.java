@@ -133,8 +133,6 @@ public class Whiteboard extends JFrame{
 						 c.setRect();
 						 c.repaint();
 						 
-						
-						           
 						 	}
 
 					        

@@ -106,10 +106,10 @@ public class Canvas extends JPanel implements MouseListener{
 		}
 	 if(buttonOval == true)
 		{
-			g.drawOval(10, 10, 50, 50);
+			g.drawOval(244, 10, 50, 50);
 			
 			g.setColor(Color.YELLOW);
-			g.fillOval(10, 10, 50, 50);
+			g.fillOval(244, 10, 50, 50);
 			setOvalF();
 		}
 	 if(buttonLine == true)
