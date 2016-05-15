@@ -40,7 +40,6 @@ public class Whiteboard extends JFrame{
 	Canvas c;
 	Graphics g;
     private HashMap<String, Integer> fontMap; 
-    private JComboBox fontSelector; 
 
 	
 	
@@ -144,7 +143,7 @@ public class Whiteboard extends JFrame{
 						 //c.addToList(m);
 						 c.repaint();
 						 
-					//	 c.print();
+					 c.print();
 						 
 						 	}
 
@@ -159,7 +158,7 @@ public class Whiteboard extends JFrame{
 						// c.addToList(o);
 						 c.repaint();
 						
-					//	 c.print();
+					 c.print();
 						
 						           
 						 }
@@ -173,7 +172,7 @@ public class Whiteboard extends JFrame{
 
 						// c.setLine();
 						 c.repaint();
-						
+						c.print();
 						           
 						 }
 
@@ -187,7 +186,7 @@ public class Whiteboard extends JFrame{
 						 //c.setText();
 						 c.repaint();
 						 
-						
+						c.print();
 						           
 						 }
 
@@ -260,55 +259,25 @@ public class Whiteboard extends JFrame{
 				JPanel script = new JPanel();
 				script.setLayout(new BoxLayout(script, BoxLayout.LINE_AXIS));
 				
-				JTextField textField = new JTextField("WhiteBoard!");
-				JButton scriptButton = new JButton("Edwardian Script");
+				JTextField textField = new JTextField("Select Font");
 				script.add(Box.createRigidArea(new Dimension(5,0)));
+				
+			    
 
+				  
+			     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); 
+			     String fonts[] = ge.getAvailableFontFamilyNames(); 
+			     JComboBox fontType = new JComboBox(fonts); 
+			     fontType.addActionListener(new ActionListener() { 
+			            public void actionPerformed(ActionEvent e) { 
+			            //add action here 
+			            } 
+			        }); 
 				script.add(textField);
-				script.add(Box.createRigidArea(new Dimension(30,0)));
-
-				script.add(scriptButton);
+				script.add(fontType);
 				controls.add(script);
 				
-				
-				/** Box panel = Box.createHorizontalBox(); 
-		         
-			      JTextField  textField = new JTextField(""); 
-			        textField.setMaximumSize(new Dimension(200, 20)); 
-			        textField.setPreferredSize(new Dimension(200, 20)); 
-			        textField.getDocument().addDocumentListener(new DocumentListener() { 
-			            public void changedUpdate(DocumentEvent e) { 
-			            } 
-			     
-			            public void insertUpdate(DocumentEvent e) { 
-			                handleTextChange(e); 
-			            } 
-			     
-			            public void removeUpdate(DocumentEvent e) { 
-			                handleTextChange(e); 
-			            } 
-			        }); 
-			         
-			         
-			        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); 
-			        String fonts[] = ge.getAvailableFontFamilyNames(); 
-			        fontMap = new HashMap<String, Integer>(); 
-			        for(int i = 0; i < fonts.length; i++) { 
-			            fontMap.put(fonts[i], i); 
-			        } 
-			         
-			        fontSelector = new JComboBox(fonts); 
-			        fontSelector.addActionListener(new ActionListener() { 
-			            public void actionPerformed(ActionEvent e) { 
-			            //    if(canvas.hasSelected() && canvas.getSelected() instanceof DText) 
-			               //     canvas.setFontForSelected((String) fontSelector.getSelectedItem()); 
-			            } 
-			        }); 
-			         
-			        panel.add(textField); 
-			        panel.add(fontSelector); 
-			         
-			        controls.add(panel, BorderLayout.WEST); */
+			
 	}
 	
 	
