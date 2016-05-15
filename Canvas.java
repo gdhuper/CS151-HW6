@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class Canvas extends JPanel implements MouseListener{
 	 boolean buttonLine = false;
 	 boolean buttonText = false;
 	
-	 ArrayList<DShape> list = new ArrayList<DShape>();
+	 static ArrayList<DShape> shapesList = new ArrayList<DShape>();
 
 	
 	
@@ -46,10 +47,81 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		
 	}
-	
-	public void addToList(DShape s) // connect with the drawwing 
+	/**
+	 * Override the paint component to draw the shape.
+	 */
+	public void paintComponent(Graphics g)
 	{
-		list.add(s);
+		
+		super.paintComponent(g);
+		this.setOpaque(true);
+		
+		for(DShape s : shapesList)
+		{
+			s.draw(g);
+		}
+		
+		
+		
+	/**	if(buttonRect == true)
+		{
+		g.drawRect(10, 10, 50, 50);
+		g.setColor(Color.CYAN);
+		
+		g.fillRect(10, 10, 50,50);
+		setRectF();
+		}
+	 if(buttonOval == true)
+		{
+			g.drawOval(244, 10, 50, 50);
+			
+			g.setColor(Color.YELLOW);
+			g.fillOval(244, 10, 50, 50);
+			setOvalF();
+		}
+	 if(buttonLine == true)
+		{
+			g.drawLine(10, 10, 50, 50);
+			g.setColor(Color.BLUE);
+			setLineF();
+		
+		}
+	// if(buttonText = true)
+	 //{
+	//	 g.drawString("WhiteBoard", 30, 30);
+	//	 setTextF();
+	 //}*/
+		
+	}
+	
+	
+	public void addToList(DShapeModel s) // connect with the drawwing 
+	{
+		DShape temp = null;
+		if(s instanceof DRectModel)
+		{
+			temp = new DRect();
+		}
+		if(s instanceof DOvalModel)
+		{
+			temp = new DOval();
+		}
+		if(s instanceof DLineModel)
+		{
+			temp = new DLine();
+		}
+		if(s instanceof DTextModel)
+		{
+			temp = new DText();
+		}
+		
+		shapesList.add(temp);
+		
+	}
+	
+	public void remove(DShapeModel s)
+	{
+		shapesList.remove(s);
 	}
 	
 	
@@ -88,43 +160,14 @@ public class Canvas extends JPanel implements MouseListener{
 		 buttonText = false;
 	}
 	
-	/**
-	 * Override the paint component to draw the shape.
-	 */
-	public void paintComponent(Graphics g)
+	
+	
+	public void print()
 	{
-		
-		super.paintComponent(g);
-		this.setOpaque(true);
-		if(buttonRect == true)
+		for(DShape m : shapesList)
 		{
-		g.drawRect(10, 10, 50, 50);
-		g.setColor(Color.CYAN);
-		
-		g.fillRect(10, 10, 50,50);
-		setRectF();
+			System.out.println(m.toString());
 		}
-	 if(buttonOval == true)
-		{
-			g.drawOval(244, 10, 50, 50);
-			
-			g.setColor(Color.YELLOW);
-			g.fillOval(244, 10, 50, 50);
-			setOvalF();
-		}
-	 if(buttonLine == true)
-		{
-			g.drawLine(10, 10, 50, 50);
-			g.setColor(Color.BLUE);
-			setLineF();
-		
-		}
-	// if(buttonText = true)
-	 //{
-	//	 g.drawString("WhiteBoard", 30, 30);
-	//	 setTextF();
-	 //}
-		
 	}
 	
 	

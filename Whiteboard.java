@@ -4,14 +4,17 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,6 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
@@ -34,6 +39,9 @@ public class Whiteboard extends JFrame{
 	public JPanel controls = new JPanel();
 	Canvas c;
 	Graphics g;
+    private HashMap<String, Integer> fontMap; 
+    private JComboBox fontSelector; 
+
 	
 	
 	/**
@@ -130,8 +138,13 @@ public class Whiteboard extends JFrame{
 				JButton rect = new JButton("Rect");
 				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
-						 c.setRect();
+						 //c.setRect();
+						c.addToList(new DRectModel());
+						// DRectModel m = new DRectModel();
+						 //c.addToList(m);
 						 c.repaint();
+						 
+					//	 c.print();
 						 
 						 	}
 
@@ -140,8 +153,13 @@ public class Whiteboard extends JFrame{
 				JButton oval = new JButton("Oval");
 				 oval.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DOval
 					 public void actionPerformed(ActionEvent e) { 
-						 c.setOval();
+						 c.addToList(new DOvalModel());
+
+						// DOvalModel o = new DOvalModel();
+						// c.addToList(o);
 						 c.repaint();
+						
+					//	 c.print();
 						
 						           
 						 }
@@ -151,7 +169,9 @@ public class Whiteboard extends JFrame{
 				JButton line = new JButton("Line");
 				 line.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DLine
 					 public void actionPerformed(ActionEvent e) { 
-						 c.setLine();
+						 c.addToList(new DLineModel());
+
+						// c.setLine();
 						 c.repaint();
 						
 						           
@@ -162,7 +182,9 @@ public class Whiteboard extends JFrame{
 				JButton text = new JButton("Text");
 				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
-						 c.setText();
+						 c.addToList(new DTextModel());
+
+						 //c.setText();
 						 c.repaint();
 						 
 						
@@ -212,7 +234,7 @@ public class Whiteboard extends JFrame{
 				 Color c = JColorChooser.showDialog(null, "Pick a Color", Color.WHITE);
 			     if(c != null)
 			     {
-			    	 //set the color of the shape
+			    	 //set c the color of the shape
 			     }
 			 
 							 }
@@ -247,6 +269,46 @@ public class Whiteboard extends JFrame{
 
 				script.add(scriptButton);
 				controls.add(script);
+				
+				
+				/** Box panel = Box.createHorizontalBox(); 
+		         
+			      JTextField  textField = new JTextField(""); 
+			        textField.setMaximumSize(new Dimension(200, 20)); 
+			        textField.setPreferredSize(new Dimension(200, 20)); 
+			        textField.getDocument().addDocumentListener(new DocumentListener() { 
+			            public void changedUpdate(DocumentEvent e) { 
+			            } 
+			     
+			            public void insertUpdate(DocumentEvent e) { 
+			                handleTextChange(e); 
+			            } 
+			     
+			            public void removeUpdate(DocumentEvent e) { 
+			                handleTextChange(e); 
+			            } 
+			        }); 
+			         
+			         
+			        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); 
+			        String fonts[] = ge.getAvailableFontFamilyNames(); 
+			        fontMap = new HashMap<String, Integer>(); 
+			        for(int i = 0; i < fonts.length; i++) { 
+			            fontMap.put(fonts[i], i); 
+			        } 
+			         
+			        fontSelector = new JComboBox(fonts); 
+			        fontSelector.addActionListener(new ActionListener() { 
+			            public void actionPerformed(ActionEvent e) { 
+			            //    if(canvas.hasSelected() && canvas.getSelected() instanceof DText) 
+			               //     canvas.setFontForSelected((String) fontSelector.getSelectedItem()); 
+			            } 
+			        }); 
+			         
+			        panel.add(textField); 
+			        panel.add(fontSelector); 
+			         
+			        controls.add(panel, BorderLayout.WEST); */
 	}
 	
 	

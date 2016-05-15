@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Random;
 
 
 public class DRect extends DShape {
@@ -8,11 +9,17 @@ public class DRect extends DShape {
 		super();
 	}
 	
+	
+	
+	
 	public void draw(Graphics g)
 	{
-		g.drawRect(10, 10, 20, 20);
-		g.setColor(Color.CYAN);
-		g.fillRect(10, 10, 20, 20);
+		Random n = new Random();
+		int x = n.nextInt(100);
+		int y = n.nextInt(100);
+		g.drawRect(x, y, 20, 20);
+		g.setColor(Color.RED);
+		g.fillRect(x, y, 20, 20);
 	}
 
 }
