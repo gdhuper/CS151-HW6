@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 public class DShape {
 	
 	private DShapeModel m;
+	private Font font;
 	
 //	ArrayList<DShapeModel> shapeList = new ArrayList<DShapeModel>();
 	
@@ -32,6 +34,10 @@ public class DShape {
 		g.setColor(Color.GRAY);
 	}
 	
+	public void setFont(Font f){
+		font = f;
+	}
+
 	
 	
 	

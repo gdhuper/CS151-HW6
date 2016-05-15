@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
@@ -18,6 +19,7 @@ public class Canvas extends JPanel implements MouseListener{
 	 boolean buttonLine = false;
 	 boolean buttonText = false;
 	
+	 Font font;
 	 static ArrayList<DShape> shapesList = new ArrayList<DShape>();
 
 	
@@ -63,34 +65,8 @@ public class Canvas extends JPanel implements MouseListener{
 		
 		
 		
-	/**	if(buttonRect == true)
-		{
-		g.drawRect(10, 10, 50, 50);
-		g.setColor(Color.CYAN);
-		
-		g.fillRect(10, 10, 50,50);
-		setRectF();
-		}
-	 if(buttonOval == true)
-		{
-			g.drawOval(244, 10, 50, 50);
-			
-			g.setColor(Color.YELLOW);
-			g.fillOval(244, 10, 50, 50);
-			setOvalF();
-		}
-	 if(buttonLine == true)
-		{
-			g.drawLine(10, 10, 50, 50);
-			g.setColor(Color.BLUE);
-			setLineF();
-		
-		}
-	// if(buttonText = true)
-	 //{
-	//	 g.drawString("WhiteBoard", 30, 30);
-	//	 setTextF();
-	 //}*/
+	
+	
 		
 	}
 	
@@ -113,6 +89,7 @@ public class Canvas extends JPanel implements MouseListener{
 		if(s instanceof DTextModel)
 		{
 			temp = new DText();
+			temp.setFont(font); 
 		}
 		
 		shapesList.add(temp);
@@ -170,6 +147,10 @@ public class Canvas extends JPanel implements MouseListener{
 		}
 	}
 	
+	public void setFont(Font f)
+	{
+		font = f;
+	}
 	
 
 

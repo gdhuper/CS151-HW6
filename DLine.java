@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Graphics;
+import java.util.Random;
 
 
 class DLine extends DShape{
@@ -12,7 +13,11 @@ class DLine extends DShape{
 	
 	public void draw(Graphics g)
 	{
-		g.drawLine(10, 10, 20, 20);
+		Random n = new Random();
+		int x = n.nextInt(100);
+		int y = n.nextInt(100);
+		g.drawLine(x, y, x+ 20, y + 20);
+		
 		g.setColor(Color.CYAN);
 	}
 }

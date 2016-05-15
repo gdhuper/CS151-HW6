@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
@@ -138,10 +139,11 @@ public class Whiteboard extends JFrame{
 				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
 						 //c.setRect();
-						c.addToList(new DRectModel());
-						// DRectModel m = new DRectModel();
+						 DRectModel m = new DRectModel();
+						c.addToList(m);
+						
 						 //c.addToList(m);
-						 c.repaint();
+						 c.repaint(m.getBounds());
 						 
 					 c.print();
 						 
@@ -152,11 +154,12 @@ public class Whiteboard extends JFrame{
 				JButton oval = new JButton("Oval");
 				 oval.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DOval
 					 public void actionPerformed(ActionEvent e) { 
-						 c.addToList(new DOvalModel());
+						 DOvalModel o = new DOvalModel();
 
-						// DOvalModel o = new DOvalModel();
+						 c.addToList(o);
+
 						// c.addToList(o);
-						 c.repaint();
+						 c.repaint(o.getBounds());
 						
 					 c.print();
 						
@@ -168,10 +171,11 @@ public class Whiteboard extends JFrame{
 				JButton line = new JButton("Line");
 				 line.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DLine
 					 public void actionPerformed(ActionEvent e) { 
-						 c.addToList(new DLineModel());
+						 DLineModel l = new DLineModel();
+						 c.addToList(l);
 
 						// c.setLine();
-						 c.repaint();
+						 c.repaint(l.getBounds());
 						c.print();
 						           
 						 }
@@ -181,10 +185,11 @@ public class Whiteboard extends JFrame{
 				JButton text = new JButton("Text");
 				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
-						 c.addToList(new DTextModel());
+						 DTextModel t = new DTextModel();
+						 c.addToList(t);
 
 						 //c.setText();
-						 c.repaint();
+						 c.repaint(t.getBounds());
 						 
 						c.print();
 						           
@@ -270,7 +275,8 @@ public class Whiteboard extends JFrame{
 			     JComboBox fontType = new JComboBox(fonts); 
 			     fontType.addActionListener(new ActionListener() { 
 			            public void actionPerformed(ActionEvent e) { 
-			            //add action here 
+			            Font f = (Font) fontType.getSelectedItem();
+			            c.setFont(f);
 			            } 
 			        }); 
 				script.add(textField);
