@@ -61,14 +61,17 @@ public class Canvas extends JPanel implements MouseListener{
 		for(DShape s : shapesList)
 		{
 			s.draw(g);
+			s.setDrawn(true);
 		}
 		
 		
-		
+	
 	
 	
 		
 	}
+	
+	
 	
 	
 	public void addToList(DShapeModel s) // connect with the drawwing 
@@ -96,9 +99,15 @@ public class Canvas extends JPanel implements MouseListener{
 		
 	}
 	
-	public void remove(DShapeModel s)
+	public void updateList()
 	{
-		shapesList.remove(s);
+		for(DShape s : shapesList)
+		{
+			if(s.isDrawn() == true)
+			{
+				shapesList.remove(s);
+			}
+		}
 	}
 	
 	

@@ -143,7 +143,9 @@ public class Whiteboard extends JFrame{
 						c.addToList(m);
 						
 						 //c.addToList(m);
-						 c.repaint(m.getBounds());
+						 c.repaint();
+						//	c.updateList();
+
 						 
 					 c.print();
 						 
@@ -159,8 +161,9 @@ public class Whiteboard extends JFrame{
 						 c.addToList(o);
 
 						// c.addToList(o);
-						 c.repaint(o.getBounds());
+						 c.repaint();
 						
+						//c.updateList();
 					 c.print();
 						
 						           
@@ -175,7 +178,9 @@ public class Whiteboard extends JFrame{
 						 c.addToList(l);
 
 						// c.setLine();
-						 c.repaint(l.getBounds());
+						 c.repaint();
+						//	c.updateList();
+
 						c.print();
 						           
 						 }
@@ -189,7 +194,9 @@ public class Whiteboard extends JFrame{
 						 c.addToList(t);
 
 						 //c.setText();
-						 c.repaint(t.getBounds());
+						 c.repaint();
+					//		c.updateList();
+
 						 
 						c.print();
 						           

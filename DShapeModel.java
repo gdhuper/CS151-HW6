@@ -65,7 +65,7 @@ public class DShapeModel {
 	public void setBounds(Rectangle bounds) {
 		this.bounds = bounds;
 	}
-
+	
 	
 
 }

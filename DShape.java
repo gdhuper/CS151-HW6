@@ -9,13 +9,23 @@ public class DShape {
 	
 	private DShapeModel m;
 	private Font font;
+	private boolean drawn = false;
 	
 //	ArrayList<DShapeModel> shapeList = new ArrayList<DShapeModel>();
 	
 	
+	public boolean isDrawn() {
+		return drawn;
+	}
+
+	public void setDrawn(boolean drawn) {
+		this.drawn = drawn;
+	}
+
 	public DShape()
 	{
 		m = new DShapeModel();
+		drawn = false;
 	}
 	
 	public Color getColor()
