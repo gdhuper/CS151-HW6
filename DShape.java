@@ -5,22 +5,15 @@ import java.util.ArrayList;
 
 
 
-public class DShape {
+public class DShape implements ModelListener{
 	
 	private DShapeModel m;
 	private Font font;
+	private String text = null;
 	private boolean drawn = false;
 	
 //	ArrayList<DShapeModel> shapeList = new ArrayList<DShapeModel>();
 	
-	
-	public boolean isDrawn() {
-		return drawn;
-	}
-
-	public void setDrawn(boolean drawn) {
-		this.drawn = drawn;
-	}
 
 	public DShape()
 	{
@@ -44,8 +37,19 @@ public class DShape {
 		g.setColor(Color.GRAY);
 	}
 	
+	public void setText(String c)
+	{
+		text = c;
+	}
+	
 	public void setFont(Font f){
 		font = f;
+	}
+
+	@Override
+	public void modelChanged(DShapeModel model) {
+		
+		
 	}
 
 	

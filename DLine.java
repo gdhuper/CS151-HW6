@@ -13,11 +13,9 @@ class DLine extends DShape{
 	
 	public void draw(Graphics g)
 	{
-		Random n = new Random();
-		int x = n.nextInt(100);
-		int y = n.nextInt(100);
-		g.drawLine(x, y, x+ 20, y + 20);
+		g.setColor(getColor());
+		g.drawLine(10, 10,  20,  20);
 		
-		g.setColor(Color.CYAN);
+		
 	}
 }
