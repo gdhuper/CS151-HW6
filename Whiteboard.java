@@ -40,6 +40,7 @@ public class Whiteboard extends JFrame{
 	public JPanel controls = new JPanel();
 	Canvas c;
 	Graphics g;
+	private String textToPrint;
     private HashMap<String, Integer> fontMap; 
 
 	
@@ -99,7 +100,11 @@ public class Whiteboard extends JFrame{
 		controls.add(Box.createRigidArea(new Dimension(0,30)));
 
 		createActionButtons(); //To create the action buttons
-		controls.add(Box.createRigidArea(new Dimension(0,50)));
+		controls.add(Box.createRigidArea(new Dimension(0,30)));
+		
+		createClearButton();
+		controls.add(Box.createRigidArea(new Dimension(0,30)));
+
 
 		createTable();  //Creates a table to display statistics
 		//*********************************************************************************************//
@@ -140,14 +145,13 @@ public class Whiteboard extends JFrame{
 					 public void actionPerformed(ActionEvent e) { 
 						 //c.setRect();
 						 DRectModel m = new DRectModel();
-						c.addToList(m);
+						c.addShape(m);
 						
 						 //c.addToList(m);
 						 c.repaint();
-						//	c.updateList();
 
 						 
-					 c.print();
+				//	 c.print();
 						 
 						 	}
 
@@ -158,13 +162,12 @@ public class Whiteboard extends JFrame{
 					 public void actionPerformed(ActionEvent e) { 
 						 DOvalModel o = new DOvalModel();
 
-						 c.addToList(o);
+						 c.addShape(o);
 
 						// c.addToList(o);
 						 c.repaint();
 						
-						//c.updateList();
-					 c.print();
+				//	 c.print();
 						
 						           
 						 }
@@ -175,13 +178,12 @@ public class Whiteboard extends JFrame{
 				 line.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DLine
 					 public void actionPerformed(ActionEvent e) { 
 						 DLineModel l = new DLineModel();
-						 c.addToList(l);
+						 c.addShape(l);
 
 						// c.setLine();
 						 c.repaint();
-						//	c.updateList();
 
-						c.print();
+				//		c.print();
 						           
 						 }
 
@@ -191,14 +193,17 @@ public class Whiteboard extends JFrame{
 				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 					 public void actionPerformed(ActionEvent e) { 
 						 DTextModel t = new DTextModel();
-						 c.addToList(t);
+						 t.setTextToDraw(getText());
+						 c.setText(getText());
+						 c.addShape(t);
+						 
 
 						 //c.setText();
 						 c.repaint();
-					//		c.updateList();
+					
 
 						 
-						c.print();
+				//		c.print();
 						           
 						 }
 
@@ -242,10 +247,10 @@ public class Whiteboard extends JFrame{
 		JButton setColr = new JButton("Set Color");
 		setColr.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
 			 public void actionPerformed(ActionEvent e) { 
-				 Color c = JColorChooser.showDialog(null, "Pick a Color", Color.WHITE);
-			     if(c != null)
+				 Color color = JColorChooser.showDialog(null, "Pick a Color", Color.WHITE);
+			     if(color != null)
 			     {
-			    	 //set c the color of the shape
+			    	c.setColor(color);
 			     }
 			 
 							 }
@@ -271,10 +276,19 @@ public class Whiteboard extends JFrame{
 				JPanel script = new JPanel();
 				script.setLayout(new BoxLayout(script, BoxLayout.LINE_AXIS));
 				
-				JTextField textField = new JTextField("Select Font");
+				JTextField textField = new JTextField("Enter text here...");
 				script.add(Box.createRigidArea(new Dimension(5,0)));
 				
-			    
+				textField.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
+					 public void actionPerformed(ActionEvent e) { 
+						 String text = textField.getText();
+						 setText(text);
+						    textField.selectAll();
+									 }
+
+								        
+								 });
+
 
 				  
 			     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); 
@@ -322,6 +336,31 @@ public class Whiteboard extends JFrame{
 
 	}
 	
+	
+	/**
+	 * To clean up the canvas
+	 */
+	public void createClearButton()
+	{
+		JPanel clearPanel = new JPanel();
+		clearPanel.setLayout(new BoxLayout(clearPanel, BoxLayout.LINE_AXIS));
+
+		JButton clear = new JButton("Clear Canvas");
+		clear.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
+			 public void actionPerformed(ActionEvent e) { 
+				 			c.clearCanvas();
+							 }
+
+						        
+						 });
+		clearPanel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+		clearPanel.add(clear);
+		
+		controls.add(clearPanel);
+
+	}
+	
 
 	/**
 	 * Helper method to create a table on control panel in main gui.
@@ -354,5 +393,16 @@ public class Whiteboard extends JFrame{
 	      controls.add(scrollpane);
 	}
 	
+	//**********************Helper methods***************************//
+	
+	public String getText()
+	{
+		return textToPrint;
+	}
+	
+	public void setText(String s)
+	{
+		textToPrint = s;
+	}
 	
 }
