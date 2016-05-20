@@ -14,12 +14,14 @@ public class DShape implements ModelListener{
 	
 //	ArrayList<DShapeModel> shapeList = new ArrayList<DShapeModel>();
 	
-
+	
+	
 	public DShape()
 	{
 		m = new DShapeModel();
 		drawn = false;
 	}
+	
 	
 	public Color getColor()
 	{
@@ -34,9 +36,9 @@ public class DShape implements ModelListener{
 	
 	public void draw(Graphics g)
 	{
-		g.setColor(Color.GRAY);
+		g.setColor(getColor());
 	}
-	
+		
 	public void setText(String c)
 	{
 		text = c;

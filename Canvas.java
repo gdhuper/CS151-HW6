@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -41,9 +42,24 @@ public class Canvas extends JPanel implements ModelListener{
 		setLayout(new BorderLayout());
 		setVisible(true);
 		
-		//setLayout(new BorderLayout());
-		
+		// To get the point where mouse was clicked
+		addMouseListener(new MouseAdapter() {
+	            public void mouseClicked(MouseEvent e) {
+	               mousePressed(e);
+	            }
+	        });
 				
+		addMouseListener(new MouseAdapter() {
+            public void mousePressed(MouseEvent e) {
+               int x = e.getX();
+               int y = e.getY();
+               
+               for(DShape s: shapesList)
+               {
+            	 // to get the bouds and test it 
+               }
+            }
+        });
 		
 		
 	}
