@@ -5,7 +5,7 @@ import java.awt.Rectangle;
 import java.util.ArrayList;
 
 
-public class DShapeModel implements ModelListener {
+public class DShapeModel {
 	
 	private int X;
 	private int Y;
@@ -13,6 +13,7 @@ public class DShapeModel implements ModelListener {
 	private int height;
 	private Rectangle bounds;
 	private String text;
+	private int ID;
 	
 	private ArrayList<ModelListener> listeners;
 	
@@ -45,6 +46,15 @@ public class DShapeModel implements ModelListener {
 		X = newX;
 	}
 
+	public int getID()
+	{
+		return this.ID;
+	}
+	
+	public void setID(int id)
+	{
+		this.ID = id;
+	}
 
 	public int getY() {
 		return Y;
@@ -53,6 +63,7 @@ public class DShapeModel implements ModelListener {
 
 	public void setY(int newY) {
 		Y = newY;
+		notifyChanges();
 	}
 
 
@@ -86,6 +97,7 @@ public class DShapeModel implements ModelListener {
 
 	public void setBounds(Rectangle bounds) {
 		this.bounds = bounds;
+		notifyChanges();
 	}
 	
 	public void addListener(ModelListener l)
@@ -98,11 +110,6 @@ public class DShapeModel implements ModelListener {
 		listeners.remove(l);
 	}
 
-	@Override
-	public void modelChanged(DShapeModel model) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	public String getTextToDraw()
 	{
@@ -112,6 +119,23 @@ public class DShapeModel implements ModelListener {
 	public void setTextToDraw(String s)
 	{
 		text = s;
+		notifyChanges();
+	}
+	
+	public void mimic(DShapeModel m)
+	{
+		setID(m.getID());
+		setBounds(m.getBounds());
+		setColor(m.getColor());
+		notifyChanges(); 
+	}
+	
+	
+	public void notifyChanges() {
+		for(ModelListener mL : listeners)
+		{
+			mL.modelChanged(this);
+		}
 	}
 	
 	//create a method to notify change to listeners list.
