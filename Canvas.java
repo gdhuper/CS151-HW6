@@ -151,7 +151,10 @@ public class Canvas extends JPanel implements ModelListener{
 		font = f;
 	}
 	
-
+	public ArrayList<DShape> getList()
+	{
+		return shapesList;
+	}
 
 
 

@@ -9,7 +9,20 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -27,6 +40,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -41,18 +56,25 @@ public class Whiteboard extends JFrame{
 	Canvas c;
 	Graphics g;
 	private String textToPrint;
-    private HashMap<String, Integer> fontMap; 
+    private ClientHandler clientHandler; 
+    private ServerAccepter serverAccepter; 
+    private java.util.List<ObjectOutputStream> outputs =
+            new ArrayList<ObjectOutputStream>();
 
 	
 	
 	/**
 	 * Main method to launch the whiteboard
 	 */
-	public static void main(String[] args)
+	/**public static void main(String[] args)
 	{
 		Whiteboard w = new Whiteboard();
-	}
+	}*/
 	
+	public static void main(String[] args) {
+      Whiteboard a = new Whiteboard();
+      Whiteboard b = new Whiteboard();
+    }
 	/**
 	 * Constructs an default whiteboard 
 	 */
@@ -97,13 +119,18 @@ public class Whiteboard extends JFrame{
 		controls.add(Box.createRigidArea(new Dimension(0,30)));
 
 		selectFont(); //To create the set font button
-		controls.add(Box.createRigidArea(new Dimension(0,30)));
+		controls.add(Box.createRigidArea(new Dimension(0,20)));
 
 		createActionButtons(); //To create the action buttons
 		controls.add(Box.createRigidArea(new Dimension(0,30)));
 		
+		createNetworkButton();
+		controls.add(Box.createRigidArea(new Dimension(0,20)));
+
+		
+		
 		createClearButton();
-		controls.add(Box.createRigidArea(new Dimension(0,30)));
+		controls.add(Box.createRigidArea(new Dimension(0,20)));
 
 
 		createTable();  //Creates a table to display statistics
@@ -335,8 +362,290 @@ public class Whiteboard extends JFrame{
 		controls.add(actionButtons);
 
 	}
+
+	/**
+	 * Networking buttons
+	 */
+	public void createNetworkButton()
+	{
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+
+		JButton server = new JButton("Server Start");
+		server.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
+			 public void actionPerformed(ActionEvent e) { 
+				 			doServer();
+							 }
+
+						        
+						 });
+		JButton client = new JButton("Client Start");
+		client.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
+			 public void actionPerformed(ActionEvent e) { 
+				 			doClient();
+							 }
+
+						        
+						 });
+		panel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+		panel.add(server);
+		panel.add(Box.createRigidArea(new Dimension(5, 0)));
+
+		panel.add(client);
+		
+		controls.add(panel);
+
+	}
+	
+	//**************************Networking Methods*************************************//
+	
+	  // Client runs this to handle incoming messages
+    // (our client only uses the inputstream of the connection)
+    private class ClientHandler extends Thread {
+         private String name;
+         private int port;
+         ClientHandler(String name, int port) {
+             this.name = name;
+             this.port = port;
+         }
+     // Connect to the server, loop getting messages
+         public void run() {
+             try {
+                 // make connection to the server name/port
+                 Socket toServer = new Socket(name, port);
+                 // get input stream to read from server and wrap in object input stream
+                 ObjectInputStream in = new ObjectInputStream(toServer.getInputStream());
+                 System.out.println("client: connected!");
+                 // we could do this if we wanted to write to server in addition
+                 // to reading
+                 // out = new ObjectOutputStream(toServer.getOutputStream());
+                 while (true) {
+                     // Get the xml string, decode to a Message object.
+                     // Blocks in readObject(), waiting for server to send something.
+                     String xmlString = (String) in.readObject();
+                     @SuppressWarnings("resource")
+					XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
+                     Message message = (Message) decoder.readObject();
+
+                     // Process the message 
+                     invokeToGUI(message);
+                 }
+             }
+             catch (Exception ex) { // IOException and ClassNotFoundException
+                ex.printStackTrace();
+             }
+             // Could null out client ptr.
+             // Note that exception breaks out of the while loop,
+             // thus ending the thread.
+        }
+    } 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    // Server thread accepts incoming client connections
+    class ServerAccepter extends Thread {
+        private int port;
+        ServerAccepter(int port) {
+            this.port = port;
+        }
+        public void run() {
+            try {
+                ServerSocket serverSocket = new ServerSocket(port);
+                while (true) {
+                    Socket toClient = null;
+                    // this blocks, waiting for a Socket to the client
+                    toClient = serverSocket.accept();
+                    System.out.println("server: got client");
+                    // Get an output stream to the client, and add it to
+                    // the list of outputs
+                    // (our server only uses the output stream of the connection)
+                    ObjectOutputStream o = new ObjectOutputStream(toClient.getOutputStream());
+                    if(!outputs.contains(o))
+                    {
+                    	Thread thread = new Thread(new Runnable(){
+
+							@Override
+							public void run() {
+								DShapeModel temp = new DShapeModel();
+								for(DShape s: c.getList())
+								{
+									if(s instanceof DRect)
+									{
+										temp = new DRectModel();
+									}
+									if(s instanceof DOval)
+									{
+										temp = new DOvalModel();
+									}
+									if(s instanceof DLine)
+									{
+										temp = new DLineModel();
+									}
+									if(s instanceof DText)
+									{
+										temp = new DTextModel();
+									}
+									
+                    			Message message = new Message(temp);
+                    			OutputStream oS = new ByteArrayOutputStream();
+                    			XMLEncoder encoder = new XMLEncoder(oS);
+                    			 encoder.writeObject(message); 
+                    		        encoder.close(); 
+                    		       String tempMesg =  oS.toString(); 
+                    		       try {
+									o.writeObject(tempMesg);
+									o.flush();
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								}
+								
+							}
+                    		
+                    	});
+                    	thread.start();
+                    }
+                    addOutput(o);
+                }
+            } catch (IOException ex) {
+                ex.printStackTrace(); 
+            }
+        }
+    }
+    
+
+    
+    //***********************************************************************//
+ // Struct object just used for communication -- sent on the object stream.
+    // Declared "static", so does not contain a pointer to the outer object.
+    // Bean style, set up for xml encode/decode.
+       public static class Message {
+           public String text;
+           public DShapeModel model;
+
+           public Message(DShapeModel m) {
+             this.model = m;
+           }
+
+           public DShapeModel getModel() {
+               return model;
+           }
+           public void setModel(DShapeModel m) {
+               this.model  = m;
+           }
+           
+         
+           
+       }
+
 	
 	
+//**********************************************************************************//
+	
+	  // Starts the sever accepter to catch incoming client connections.
+    // Wired to Server button.
+    public void doServer() {
+       // status.setText("Start server");
+        String result = JOptionPane.showInputDialog("Run server on port", "912");
+        if (result!=null) {
+            System.out.println("server: start");
+            serverAccepter = new ServerAccepter(Integer.parseInt(result.trim()));
+            serverAccepter.start();
+        }
+    }
+    // Runs a client handler to connect to a server.
+    // Wired to Client button.
+    public void doClient() {
+       // status.setText("Start client");
+        String result = JOptionPane.showInputDialog("Connect to host:port", "127.0.0.1:912");
+        if (result!=null) {
+            String[] parts = result.split(":");
+            System.out.println("client: start");
+            clientHandler = new ClientHandler(parts[0].trim(), Integer.parseInt(parts[1].trim()));
+            clientHandler.start();
+        }
+    }
+    
+    
+    
+
+    // Adds an object stream to the list of outputs
+    // (this and sendToOutputs() are synchronzied to avoid conflicts)
+    public synchronized void addOutput(ObjectOutputStream out) {
+        outputs.add(out);
+    }
+    
+    
+    
+ // Given a message, puts that message in the local GUI.
+    // Can be called by any thread.
+    public void invokeToGUI(Message message) {
+        final Message temp = message;
+        SwingUtilities.invokeLater( new Runnable() {
+            public void run() {
+              c.addShape(message.getModel());
+              //c.repaint();
+            }
+        });
+    }
+
+    // Initiate message send -- send both local annd remote (must be on swing thread)
+    // Wired to text field.
+    public void doSend(DShapeModel m) {
+        Message message = new Message(m);
+      //  message.setText(field.getText());
+      // message.setModel(m);
+       // sendLocal(message);
+        sendRemote(message);
+       // field.setText("");
+    }
+    
+    
+    // Appends a message to the local GUI (must be on swing thread)
+    public void sendLocal(Message message) {
+     //   textArea.setText(textArea.getText() + message.getText() + "\n" + message.getDate() + "\n\n");
+    }
+    
+    
+    
+    // Sends a message to all of the outgoing streams.
+    // Writing rarely blocks, so doing this on the swing thread is ok,
+    // although could fork off a worker to do it.
+    public synchronized void sendRemote(Message message) {
+      //  status.setText("Server send");
+        System.out.println("server: send " + message);
+
+        // Convert the message object into an xml string.
+        OutputStream memStream = new ByteArrayOutputStream();
+        XMLEncoder encoder = new XMLEncoder(memStream);
+        encoder.writeObject(message);
+        encoder.close();
+        String xmlString = memStream.toString();
+        // Now write that xml string to all the clients.
+        Iterator<ObjectOutputStream> it = outputs.iterator();
+        while (it.hasNext()) {
+            ObjectOutputStream out = it.next();
+            try {
+                out.writeObject(xmlString);
+                out.flush();
+            }
+            catch (Exception ex) {
+                ex.printStackTrace();
+                it.remove();
+                // Cute use of iterator and exceptions --
+                // drop that socket from list if have probs with it
+            }
+        }
+    }
+    
+    
+
+    
+    //**************************************************************************************//
+	
+	//**************************************************************************************//
+    
 	/**
 	 * To clean up the canvas
 	 */
