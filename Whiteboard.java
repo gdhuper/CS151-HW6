@@ -1,12 +1,12 @@
+
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.XMLDecoder;
@@ -20,8 +20,6 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.Box;
@@ -50,17 +48,29 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 
+
 public class Whiteboard extends JFrame{
 	
 	public JPanel controls = new JPanel();
 	Canvas c;
 	Graphics g;
 	private String textToPrint;
+	
     private ClientHandler clientHandler; 
     private ServerAccepter serverAccepter; 
     private java.util.List<ObjectOutputStream> outputs =
             new ArrayList<ObjectOutputStream>();
+    JButton server, client;
+    
+    //From sanford code 
+    static final int NORMAL_MODE = 0;
+    static final int SERVER_MODE = 1;
+    static final int CLIENT_MODE = 2;
+    public static int IDTemp = 0;
+    private int mode;
+    private ArrayList<JComponent> disabledList;
 
+   
 	
 	
 	/**
@@ -82,6 +92,8 @@ public class Whiteboard extends JFrame{
 		{
 		
 		showGUI();
+		this.mode = NORMAL_MODE;
+		disabledList = new ArrayList<JComponent>();
 		}
 	/**
 	 * Method to create the main GUI of the Whiteboard
@@ -93,7 +105,7 @@ public class Whiteboard extends JFrame{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
-		 c = new Canvas(); //Creating the canvas in main frame
+		 c = new Canvas(this); //Creating the canvas in main frame
 		
 		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		
@@ -154,6 +166,54 @@ public class Whiteboard extends JFrame{
 		frame.setVisible(true);
 
 }
+	
+	
+	//***********************Helper getters and Setters for networking*********************//
+	public static int getIDNumber() {
+		return IDTemp++;
+
+	}
+
+	public boolean isClient() {
+		boolean temp = false;
+
+		if (mode != CLIENT_MODE) {
+			temp = false;
+		} else if (mode == CLIENT_MODE) {
+			temp = true;
+		}
+
+		return temp;
+	}
+
+	public boolean isServer() {
+		boolean temp = false;
+
+		if (this.mode == SERVER_MODE) {
+			temp = true;
+		} else if (this.mode != SERVER_MODE) {
+			temp = false;
+		}
+
+		return temp;
+	}
+
+	public int getMode() {
+		return this.mode;
+	}
+
+	public void setMode(int newMode) {
+		this.mode = newMode;
+	}
+	
+//*****************************************************************************************//
+	    
+	
+	
+	
+	
+	
+	
 	/**
 	 * Helper methods to create the add buttons in the main gui
 	 */
@@ -371,7 +431,7 @@ public class Whiteboard extends JFrame{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
-		JButton server = new JButton("Server Start");
+		 server = new JButton("Server Start");
 		server.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
 			 public void actionPerformed(ActionEvent e) { 
 				 			doServer();
@@ -379,7 +439,7 @@ public class Whiteboard extends JFrame{
 
 						        
 						 });
-		JButton client = new JButton("Client Start");
+		 client = new JButton("Client Start");
 		client.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
 			 public void actionPerformed(ActionEvent e) { 
 				 			doClient();
@@ -486,7 +546,7 @@ public class Whiteboard extends JFrame{
 										temp = new DTextModel();
 									}
 									
-                    			Message message = new Message(temp);
+                    			Message message = new Message(Message.ADD, temp);
                     			OutputStream oS = new ByteArrayOutputStream();
                     			XMLEncoder encoder = new XMLEncoder(oS);
                     			 encoder.writeObject(message); 
@@ -521,13 +581,30 @@ public class Whiteboard extends JFrame{
     // Declared "static", so does not contain a pointer to the outer object.
     // Bean style, set up for xml encode/decode.
        public static class Message {
-           public String text;
+           public static final int ADD = 0;
+		public static final int REMOVE = 1;
+        public static final int FRONT = 2;
+        public static final int BACK = 3;
+        public static final int CHANGE = 4;
+
+           public int command;
            public DShapeModel model;
 
-           public Message(DShapeModel m) {
+           public Message(int c, DShapeModel m) { // uncomment this stuff
              this.model = m;
+           this.command = c;
            }
 
+           public int getCommand()
+           {
+        	   return this.command;
+
+           }
+           
+           public void setCommand(int c)
+           {
+        	   this.command = c;
+           }
            public DShapeModel getModel() {
                return model;
            }
@@ -543,6 +620,14 @@ public class Whiteboard extends JFrame{
 	
 //**********************************************************************************//
 	
+       private void disableControls(int mode) {   //Change it later 
+           client.setEnabled(false); 
+           server.setEnabled(false); 
+           if(this.mode == CLIENT_MODE) 
+               for(JComponent comp : disabledList) 
+                   comp.setEnabled(false); 
+       }
+       
 	  // Starts the sever accepter to catch incoming client connections.
     // Wired to Server button.
     public void doServer() {
@@ -550,6 +635,8 @@ public class Whiteboard extends JFrame{
         String result = JOptionPane.showInputDialog("Run server on port", "912");
         if (result!=null) {
             System.out.println("server: start");
+            disableControls(SERVER_MODE);  //Change it later 
+            this.mode = SERVER_MODE;
             serverAccepter = new ServerAccepter(Integer.parseInt(result.trim()));
             serverAccepter.start();
         }
@@ -562,6 +649,8 @@ public class Whiteboard extends JFrame{
         if (result!=null) {
             String[] parts = result.split(":");
             System.out.println("client: start");
+            disableControls(CLIENT_MODE); //Change it later 
+            this.mode = CLIENT_MODE;
             clientHandler = new ClientHandler(parts[0].trim(), Integer.parseInt(parts[1].trim()));
             clientHandler.start();
         }
@@ -584,18 +673,52 @@ public class Whiteboard extends JFrame{
         final Message temp = message;
         SwingUtilities.invokeLater( new Runnable() {
             public void run() {
-              c.addShape(message.getModel());
-              //c.repaint();
-            }
-        });
+                DShapeModel shape = getShapeWithID(message.getModel().getID()); 
+               
+                switch(message.getCommand()) { 
+                    case Message.ADD: 
+                        if(shape == null) 
+                            c.addShape(message.getModel()); 
+                        break; 
+                   // case Message.REMOVE:  
+                    //    if(shape != null) 
+                      //      canvas.markForRemoval(shape); 
+                       // break; 
+                    //case Message.BACK:  
+                      //  if(shape != null) 
+                       //     canvas.moveToBack(shape); 
+                       // break; 
+                   // case Message.FRONT:  
+                     //   if(shape != null) 
+                       //     canvas.moveToFront(shape); 
+                        //break; 
+                    //case Message.CHANGE: 
+                  //      if(shape != null) 
+                          // shape.getModel().mimic(message.getModel()); 
+                      //  updateTableSelection(shape); 
+                       // break; 
+                    default: break; 
+                } 
+            } 
+        }); 
     }
+ 
+    public DShapeModel getShapeWithID(int ID) { 
+        for(DShapeModel shape : c.getModelList()) 
+            if(shape.getID() == ID) 
+                return shape; 
+        return null; 
+    } 
 
+            
     // Initiate message send -- send both local annd remote (must be on swing thread)
     // Wired to text field.
-    public void doSend(DShapeModel m) {
-        Message message = new Message(m);
+    public void doSend( int command, DShapeModel m) {
+        Message message = new Message(command,  m);
       //  message.setText(field.getText());
       // message.setModel(m);
+        message.setCommand(command); //Change it later
+        message.setModel(m);
        // sendLocal(message);
         sendRemote(message);
        // field.setText("");

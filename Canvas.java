@@ -16,16 +16,22 @@ import javax.swing.JPanel;
 public class Canvas extends JPanel implements ModelListener{
 	
 	 public int oldX, oldY, oldW, oldH;	
-	 private Color color;
+	 private Color color; 
+	 Whiteboard wB;
 	 Font font;
 	 private String text;
 	 private ArrayList<DShape> shapesList = new ArrayList<DShape>();
+	 private ArrayList<DShapeModel> modelShape = new ArrayList<DShapeModel>();
+
+	 
+	 
 
 	
 	
-	public Canvas()
+	public Canvas(Whiteboard w)
 	{
 		createCanvas();
+		this.wB = w;
 	}
 	
 	
@@ -106,8 +112,14 @@ public class Canvas extends JPanel implements ModelListener{
 	{
 		return text;
 	}
-	public void addShape(DShapeModel s) // connect with the drawwing 
+	public void addShape(DShapeModel s) // connect with the drawing 
 	{
+		if(!wB.isClient())
+		{
+			s.setID(Whiteboard.getIDNumber());
+			modelShape.add(s);
+		}
+		
 		DShape temp = null;
 		if(s instanceof DRectModel)
 		{
@@ -129,6 +141,14 @@ public class Canvas extends JPanel implements ModelListener{
 		//s.addListener(this);
 		shapesList.add(temp);
 		s.setColor(getColor());
+		
+		//Networking stuff // remove later if doesnt work
+		if(wB.isServer())
+		{
+			wB.doSend(Whiteboard.Message.ADD, s);
+		}
+		
+		
 		
 	}
 	
@@ -155,12 +175,20 @@ public class Canvas extends JPanel implements ModelListener{
 	{
 		return shapesList;
 	}
+	
+	public ArrayList<DShapeModel> getModelList()
+	{
+		return modelShape;
+	}
 
 
 
 	@Override
 	public void modelChanged(DShapeModel model) {
-		// TODO Auto-generated method stub
+		if(wB.isServer())
+		{
+			wB.doSend(Whiteboard.Message.CHANGE, model);
+		}
 		
 	}
 	
