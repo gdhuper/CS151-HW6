@@ -19,7 +19,7 @@ public class DShape implements ModelListener{
 	public DShape()
 	{
 		m = new DShapeModel();
-		drawn = false;
+		//drawn = false;
 	}
 	
 	
@@ -53,7 +53,11 @@ public class DShape implements ModelListener{
 		
 		
 	}
-
+	
+	public int getModelID()
+	{
+		return m.getID();
+	}
 	
 	
 	

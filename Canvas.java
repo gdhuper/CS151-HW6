@@ -48,6 +48,7 @@ public class Canvas extends JPanel implements ModelListener{
 		setLayout(new BorderLayout());
 		setVisible(true);
 		
+		
 		// To get the point where mouse was clicked
 		addMouseListener(new MouseAdapter() {
 	            public void mouseClicked(MouseEvent e) {
@@ -69,21 +70,7 @@ public class Canvas extends JPanel implements ModelListener{
 		
 		
 	}
-	/**
-	 * Override the paint component to draw the shape.
-	 */
-	public void paintComponent(Graphics g)
-	{
-		g.setColor(getColor());
-		super.paintComponent(g);
-		this.setOpaque(true);
-		
-		for(DShape s : shapesList)
-		{
-			s.draw(g);
-		}
 	
-	}
 	
 	
 	/**
@@ -114,7 +101,7 @@ public class Canvas extends JPanel implements ModelListener{
 	}
 	public void addShape(DShapeModel s) // connect with the drawing 
 	{
-		if(!wB.isClient())
+		if(wB.isClient() == false)
 		{
 			s.setID(Whiteboard.getIDNumber());
 			modelShape.add(s);
@@ -143,7 +130,7 @@ public class Canvas extends JPanel implements ModelListener{
 		s.setColor(getColor());
 		
 		//Networking stuff // remove later if doesnt work
-		if(wB.isServer())
+		if(wB.isServer() == true)
 		{
 			wB.doSend(Whiteboard.Message.ADD, s);
 		}
@@ -153,6 +140,35 @@ public class Canvas extends JPanel implements ModelListener{
 	}
 	
 
+	 public DShape getShapeWithID(int ID)
+	 {
+		 for(DShape s: shapesList)
+		 {
+			 if(s.getModelID() == ID)
+			 {
+				 return s;
+			 }
+		 }
+		 return null;
+	 }
+	 
+	 
+	 /**
+		 * Override the paint component to draw the shape.
+		 */
+		public void paintComponent(Graphics g)
+		{
+			
+			super.paintComponent(g);
+			g.setColor(getColor());
+			
+			
+			for(DShape s : shapesList)
+			{
+				s.draw(g);
+			}
+		
+		}
 	
 	
 	/**
@@ -162,7 +178,7 @@ public class Canvas extends JPanel implements ModelListener{
 	{
 		for(DShape m : shapesList)
 		{
-			System.out.println(m);
+			System.out.println(m.getModelID());
 		}
 	}
 	
@@ -185,7 +201,7 @@ public class Canvas extends JPanel implements ModelListener{
 
 	@Override
 	public void modelChanged(DShapeModel model) {
-		if(wB.isServer())
+		if(wB.isServer() == true)
 		{
 			wB.doSend(Whiteboard.Message.CHANGE, model);
 		}
