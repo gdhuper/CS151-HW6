@@ -56,37 +56,40 @@ public class Whiteboard extends JFrame{
 	Graphics g;
 	private String textToPrint;
 	
+  
+    private static int IDTemp = 0;
+    private int mode;
+   
     private ClientHandler clientHandler; 
     private ServerAccepter serverAccepter; 
     private java.util.List<ObjectOutputStream> outputs =
             new ArrayList<ObjectOutputStream>();
+    private ArrayList<JComponent> disableComponentIfClient = new ArrayList<JComponent>();
     JButton server, client;
     
-    //From sanford code 
-    static final int NORMAL_MODE = 0;
-    static final int SERVER_MODE = 1;
-    static final int CLIENT_MODE = 2;
-    private static int IDTemp = 0;
-    private int mode;
-    private ArrayList<JComponent> disabledList = new ArrayList<JComponent>();
+
 
    
 	
 	
 	/**
-	 * Main method to launch the whiteboard
+	 * Main method to launch the Whiteboard 
+	 * Launches the Whiteboard GUI 
 	 */
-	/**public static void main(String[] args)
-	{
-		Whiteboard w = new Whiteboard();
-	}*/
-	
 	public static void main(String[] args) {
-      Whiteboard a = new Whiteboard();
-      Whiteboard b = new Whiteboard();
-    }
+	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception ignored) {
+		}
+		for (int i = 0; i < 3; i++) {
+			new Whiteboard();
+		}
+
+	}
+	
 	/**
-	 * Constructs an default whiteboard 
+	 * Constructs the default Whiteboard constructor 
+	 * Sets up the main GUI and draws it.  
 	 */
 	public Whiteboard() 
 		{
@@ -94,8 +97,10 @@ public class Whiteboard extends JFrame{
 		showGUI();
 		
 		}
+	
 	/**
-	 * Method to create the main GUI of the Whiteboard
+	 * Method to set up the main GUI
+	 * Creates all the GUI  elements
 	 */
 	private void showGUI() {
 	
@@ -104,8 +109,8 @@ public class Whiteboard extends JFrame{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setLayout(new BorderLayout());
 		
-		 c = new Canvas(this); //Creating the canvas in main frame
-		 frame.add(c, BorderLayout.CENTER);
+		c = new Canvas(this); //Creating the canvas in main frame
+		frame.add(c, BorderLayout.CENTER);
 		
 		controls.setLayout(new BoxLayout(controls, BoxLayout.Y_AXIS));
 		
@@ -139,8 +144,6 @@ public class Whiteboard extends JFrame{
 		createNetworkButton();
 		controls.add(Box.createRigidArea(new Dimension(0,20)));
 
-		
-		
 		createClearButton();
 		controls.add(Box.createRigidArea(new Dimension(0,20)));
 
@@ -151,8 +154,8 @@ public class Whiteboard extends JFrame{
 		
 		
 		// To align all the components to the left 
-		for (Component comp : controls.getComponents()) { 
-			 ((JComponent) comp).setAlignmentX(Box.LEFT_ALIGNMENT);
+		for (Component comp : controls.getComponents()) {
+			((JComponent) comp).setAlignmentX(Box.LEFT_ALIGNMENT);
 		}
 		
 		//Adding components to the main frame
@@ -165,96 +168,41 @@ public class Whiteboard extends JFrame{
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
-}
-	
-	
-	//***********************Helper getters and Setters for networking*********************//
-	public static int getIDNumber() {
-		return IDTemp++;
-
-	}
-
-	public boolean isClient() {
-		boolean temp = false;
-
-		if (this.mode != CLIENT_MODE) {
-			temp = false;
-		} else if (this.mode == CLIENT_MODE) {
-			temp = true;
-		}
-
-		return temp;
-	}
-
-	public boolean isServer() {
-		boolean temp = false;
-
-		if (this.mode == SERVER_MODE) {
-			temp = true;
-		} else if (this.mode != SERVER_MODE) {
-			temp = false;
-		}
-
-		return temp;
-	}
-
-	public int getMode() {
-		return this.mode;
-	}
-
-	public void setMode(int newMode) {
-		this.mode = newMode;
 	}
 	
-//*****************************************************************************************//
-	    
-	
-	
-	
-	
-	
-	
+
 	/**
-	 * Helper methods to create the add buttons in the main gui
+	 * Helper methods to create the add buttons in the main GUI
 	 */
 	public void createAddButtons()
 	{
-				//Add shapes button
-				
-				JPanel addButtons = new JPanel();
-				addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.LINE_AXIS));
-				addButtons.add(Box.createRigidArea(new Dimension(0, 5)));
-				JLabel add = new JLabel("Add");
-				add.setBackground(Color.RED);;
-				
-				JButton rect = new JButton("Rect");
-				 rect.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
-					 public void actionPerformed(ActionEvent e) { 
-						 //c.setRect();
-						 DRectModel m = new DRectModel();
-						c.addShape(m);
-						
-						 //c.addToList(m);
-						 c.repaint();
+		// Add shapes button
 
-						 
-					 c.print();
-						 
-						 	}
+		JPanel addButtons = new JPanel();
+		addButtons.setLayout(new BoxLayout(addButtons, BoxLayout.LINE_AXIS));
+		addButtons.add(Box.createRigidArea(new Dimension(0, 5)));
+		JLabel add = new JLabel("Add");
+		add.setBackground(Color.RED);
 
-					        
-					 });
+		JButton rect = new JButton("Rect");
+		rect.addActionListener(new ActionListener() { // Added an action listener to connect to canvas and then connect canvas to DRect
+			public void actionPerformed(ActionEvent e) {
+				DRectModel m = new DRectModel();
+				c.addShape(m);
+				c.repaint();
+				c.print(); // for debugging 
+
+			}
+
+		});
 				JButton oval = new JButton("Oval");
 				 oval.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DOval
 					 public void actionPerformed(ActionEvent e) { 
 						 DOvalModel o = new DOvalModel();
-
 						 c.addShape(o);
-
-						// c.addToList(o);
 						 c.repaint();
 						
-					 c.print();
+					 c.print(); //For debugging 
 						
 						           
 						 }
@@ -266,35 +214,26 @@ public class Whiteboard extends JFrame{
 					 public void actionPerformed(ActionEvent e) { 
 						 DLineModel l = new DLineModel();
 						 c.addShape(l);
-
-						// c.setLine();
 						 c.repaint();
 
-				//		c.print();
+						 c.print(); //for debugging
 						           
 						 }
 
 					        
 					 });
 				JButton text = new JButton("Text");
-				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
+				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DText
 					 public void actionPerformed(ActionEvent e) { 
 						 DTextModel t = new DTextModel();
 						 t.setTextToDraw(getText());
 						 c.setText(getText());
 						 c.addShape(t);
-						 
-
-						 //c.setText();
 						 c.repaint();
-					
-
 						 
-				//		c.print();
+						 c.print(); //for debugging
 						           
-						 }
-
-					        
+					 	}      
 					 });
 				
 				
@@ -317,22 +256,16 @@ public class Whiteboard extends JFrame{
 				addButtons.add(text);
 				addButtons.add(Box.createRigidArea(new Dimension(5,0)));
 
-				//Add buttons
-				disabledList.add(rect);
-				disabledList.add(oval);
-				disabledList.add(line);
-				disabledList.add(text);
+				//add buttons to disabled list to later use it to disable  buttons if it runs on client mode
+				disableComponentIfClient.add(rect);
+				disableComponentIfClient.add(oval);
+				disableComponentIfClient.add(line);
+				disableComponentIfClient.add(text);
 				
-				controls.add(addButtons);
-				
-
-
-
-				
-				
-				
-		
+				controls.add(addButtons); //Adds button to main controls panel 
+	
 	}
+	
 	/**
 	 * Helper method to create set color button in main GUI
 	 */
@@ -341,75 +274,82 @@ public class Whiteboard extends JFrame{
 		JPanel setColor = new JPanel();
 		setColor.setLayout(new BoxLayout(setColor, BoxLayout.LINE_AXIS));
 		JButton setColr = new JButton("Set Color");
-		setColr.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
-			 public void actionPerformed(ActionEvent e) { 
-				 Color color = JColorChooser.showDialog(null, "Pick a Color", Color.WHITE);
-			     if(color != null)
-			     {
-			    	c.setColor(color);
-			     }
-			 
-							 }
+		setColr.addActionListener(new ActionListener() {  
+			public void actionPerformed(ActionEvent e) {
+				Color color = JColorChooser.showDialog(null, "Pick a Color",
+						Color.WHITE);
+				if (color != null) {
+					c.setColor(color); //Fix color setting
+				}
 
-						        
-						 });
-					
-		
-		setColor.add(Box.createRigidArea(new Dimension(5,0)));
+			}
 
+		});
+
+		setColor.add(Box.createRigidArea(new Dimension(5, 0)));
 		setColor.add(setColr);
-		disabledList.add(setColr);
-
+		
+		disableComponentIfClient.add(setColr);
 		controls.add(setColor);
 
 		
 	}
 	
 	/**
-	 * Helper method to create font button on main gui
+	 * Helper method to create text fields to input text and font drop down box on Controls panel
 	 */
 	public void selectFont()
 	{
-		//Edwardian script stuff
-				JPanel script = new JPanel();
-				script.setLayout(new BoxLayout(script, BoxLayout.LINE_AXIS));
-				
-				JTextField textField = new JTextField("Enter text here...");
-				script.add(Box.createRigidArea(new Dimension(5,0)));
-				
-				textField.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DRect
-					 public void actionPerformed(ActionEvent e) { 
-						 String text = textField.getText();
-						 setText(text);
-						    textField.selectAll();
-									 }
 
-								        
-								 });
+		JPanel script = new JPanel();
+		script.setLayout(new BoxLayout(script, BoxLayout.LINE_AXIS));
 
+		JTextField textField = new JTextField("Enter text here...");
+		script.add(Box.createRigidArea(new Dimension(5, 0)));
+		textField.getDocument().addDocumentListener(new DocumentListener() // Fix Listening problem
+        {
 
-				  
-			     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(); 
-			     String fonts[] = ge.getAvailableFontFamilyNames(); 
-			     JComboBox fontType = new JComboBox(fonts); 
-			     fontType.addActionListener(new ActionListener() { 
-			            public void actionPerformed(ActionEvent e) { 
-			            Font f = (Font) fontType.getSelectedItem();
-			            c.setFont(f);
-			            } 
-			        }); 
-				script.add(textField);
-				script.add(fontType);
-				controls.add(script);
-				disabledList.add(fontType);
-				disabledList.add(textField);
+            public void changedUpdate(DocumentEvent arg0) 
+            {
+
+            }
+            public void insertUpdate(DocumentEvent arg0) 
+            {
+            	String text = textField.getText(); //Wont work when updated text
+				setText(text);
 				
-			
+            }
+
+            public void removeUpdate(DocumentEvent arg0) 
+            {
+            	String text = textField.getText();
+				setText(text);
+				
+            }
+        });
+
+
+		GraphicsEnvironment ge = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		String fonts[] = ge.getAvailableFontFamilyNames();
+		JComboBox fontType = new JComboBox(fonts);
+		fontType.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Font f = (Font) fontType.getSelectedItem();
+				c.setFont(f);	// Check how the font change should be handled 
+			}
+		});
+		script.add(textField);
+		script.add(fontType);
+		controls.add(script);
+		disableComponentIfClient.add(fontType);
+		disableComponentIfClient.add(textField);
+
 	}
-	
 	
 	/**
 	 * Helper method to create action buttons in the GUI
+	 * Buttons to modify shapes on the canvas 
 	 */
 	public void createActionButtons()
 	{
@@ -432,55 +372,54 @@ public class Whiteboard extends JFrame{
 		actionButtons.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		
-		controls.add(actionButtons);
-		disabledList.add(moveToFront);
-		disabledList.add(moveToBack);
-		disabledList.add(removeShape);
-
-
+		// Adding buttons to disabled list to disable them if the canvas runs on client mode
+		disableComponentIfClient.add(moveToFront);
+		disableComponentIfClient.add(moveToBack);
+		disableComponentIfClient.add(removeShape);
 		
-
+		controls.add(actionButtons);
 	}
 
 	/**
-	 * Networking buttons
+	 * Sets up the networking buttons to handle network and client communication 
 	 */
 	public void createNetworkButton()
 	{
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
-		 server = new JButton("Server Start");
-		server.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
-			 public void actionPerformed(ActionEvent e) { 
-				 			doServer();
-							 }
+		server = new JButton("Server Start");
+		server.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doServer();  //Calls the doServer helper method that activates the Server mode
+			}
 
-						        
-						 });
-		 client = new JButton("Client Start");
-		client.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
-			 public void actionPerformed(ActionEvent e) { 
-				 			doClient();
-							 }
+		});
+		client = new JButton("Client Start");
+		client.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				doClient(); //Activates the client mode
+			}
 
-						        
-						 });
+		});
 		panel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		panel.add(server);
 		panel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		panel.add(client);
-		
+
 		controls.add(panel);
 
 	}
 	
 	//**************************Networking Methods*************************************//
 	
-	  // Client runs this to handle incoming messages
-    // (our client only uses the inputstream of the connection)
+	  
+	/**
+	 * Private inner class to read the input messages from the Server 
+	 * Referenced from Sample Code from class lectures 
+	 */
     private class ClientHandler extends Thread {
          private String name;
          private int port;
@@ -488,7 +427,6 @@ public class Whiteboard extends JFrame{
              this.name = name;
              this.port = port;
          }
-     // Connect to the server, loop getting messages
          public void run() {
              try {
                  // make connection to the server name/port
@@ -496,9 +434,6 @@ public class Whiteboard extends JFrame{
                  // get input stream to read from server and wrap in object input stream
                  ObjectInputStream in = new ObjectInputStream(toServer.getInputStream());
                  System.out.println("client: connected!");
-                 // we could do this if we wanted to write to server in addition
-                 // to reading
-                 // out = new ObjectOutputStream(toServer.getOutputStream());
                  while (true) {
                      // Get the xml string, decode to a Message object.
                      // Blocks in readObject(), waiting for server to send something.
@@ -507,21 +442,23 @@ public class Whiteboard extends JFrame{
 					XMLDecoder decoder = new XMLDecoder(new ByteArrayInputStream(xmlString.getBytes()));
                      Message message = (Message) decoder.readObject();
 
-                     // Process the message 
+                     // Reads the message and update changes to Clients GUI
                      invokeToGUI(message);
                  }
              }
-             catch (Exception ex) { // IOException and ClassNotFoundException
+             catch (Exception ex) { 
                 ex.printStackTrace();
              }
-             // Could null out client ptr.
-             // Note that exception breaks out of the while loop,
-             // thus ending the thread.
+        
         }
     } 
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     
-    // Server thread accepts incoming client connections
+    
+    /**
+     * Private inner class for Server that sends data (messages) to client
+     * Referenced from Sample code from class lectures 
+     */
     class ServerAccepter extends Thread {
         private int port;
         ServerAccepter(int port) {
@@ -537,7 +474,6 @@ public class Whiteboard extends JFrame{
                     System.out.println("server: got client");
                     // Get an output stream to the client, and add it to
                     // the list of outputs
-                    // (our server only uses the output stream of the connection)
                    final  ObjectOutputStream o = new ObjectOutputStream(toClient.getOutputStream());
                     if(!outputs.contains(o))
                     {
@@ -549,12 +485,13 @@ public class Whiteboard extends JFrame{
 								for(DShape s: c.getList())
 								try {
 									temp = getModel(s);
+									//Encodes the message object into XML format 
 									Message message = new Message(Message.ADD, temp);
 									OutputStream oS = new ByteArrayOutputStream();
 									XMLEncoder encoder = new XMLEncoder(oS);
-                    			 encoder.writeObject(message); 
+									encoder.writeObject(message); 
                     		        encoder.close(); 
-                    		       String tempMesg =  (String) oS.toString(); 
+                    		        String tempMesg =  (String) oS.toString(); 
                     		       
 									o.writeObject(tempMesg);
 									o.flush();
@@ -577,35 +514,98 @@ public class Whiteboard extends JFrame{
         }
     }
     
-    //*****************Helper method to get the list of shapes*****************//
     
+    
+	//***********************Helper getters and Setters methods for networking part*********************//
+    
+    /**
+     * Assigns an ID number to a shape object
+     * @return the id to be assigned to a shape object 
+     */
+	public static int getIDNumber() {
+		return IDTemp++;
+
+	}
+	
+	/**
+	 * To check if the current mode is client
+	 * @return true if the current mode is client mode else return false
+	 */
+	public boolean isClient() {
+		boolean temp = false;
+
+		if (this.mode != 2) {
+			temp = false;
+		} else if (this.mode == 2) {
+			temp = true;
+		}
+
+		return temp;
+	}
+
+	/**
+	 * To check if the current mode is Server mode
+	 * @return true if the current mode is Server mode else return false 
+	 */
+	public boolean isServer() {
+		boolean temp = false;
+
+		if (this.mode == 1) {
+			temp = true;
+		} else if (this.mode != 1) {
+			temp = false;
+		}
+
+		return temp;
+	}
+	
+	/**
+	 * Getter method to return the current mode
+	 * @return the current mode 
+	 */
+	public int getMode() {
+		return this.mode;
+	}
+	
+	/**
+	 * Setter method to set the current mode to a new value (mode)
+	 * @param newMode the new mode to be set as current mode 
+	 */
+	public void setMode(int newMode) {
+		this.mode = newMode;
+	}
+	
+//*****************************************************************************************//
+	    
+    
+    /**
+     * Helper method to get the model type from a DShape object
+     * @param s the Dhsape object to determine the DShapeMOdel object for
+     * @return the DShapeModel object 
+     */
     public DShapeModel getModel(DShape s)
     {
-    	DShapeModel temp =  null;
-		
-			if(s instanceof DRect)
-			{
-				temp = new DRectModel();
-			}
-			if(s instanceof DOval)
-			{
-				temp = new DOvalModel();
-			}
-			if(s instanceof DLine)
-			{
-				temp = new DLineModel();
-			}
-			if(s instanceof DText)
-			{
-				temp = new DTextModel();
-			}
-			return temp;
-    }
+		DShapeModel temp = null;
+
+		if (s instanceof DRect) {
+			temp = new DRectModel();
+		}
+		if (s instanceof DOval) {
+			temp = new DOvalModel();
+		}
+		if (s instanceof DLine) {
+			temp = new DLineModel();
+		}
+		if (s instanceof DText) {
+			temp = new DTextModel();
+		}
+		return temp;
+	}
     
-    //***********************************************************************//
- // Struct object just used for communication -- sent on the object stream.
-    // Declared "static", so does not contain a pointer to the outer object.
-    // Bean style, set up for xml encode/decode.
+    
+    	/**
+    	 * Helper inner class to create message objects in terms of model type and command type
+    	 */
        public static class Message {
         public static final int ADD = 0;
 		public static final int REMOVE = 1;
@@ -654,8 +654,8 @@ public class Whiteboard extends JFrame{
        private void disableControls(int mode) {   //Change it later 
            client.setEnabled(false); 
            server.setEnabled(false); 
-           if(this.mode == CLIENT_MODE) 
-           { for(JComponent comp : disabledList) 
+           if(this.mode == 2) 
+           { for(JComponent comp : disableComponentIfClient) 
            		{
                    comp.setEnabled(false); 
            		}
@@ -669,8 +669,8 @@ public class Whiteboard extends JFrame{
         String result = JOptionPane.showInputDialog("Run server on port", "912");
         if (result!=null) {
             System.out.println("server: start");
-            disableControls(SERVER_MODE);  //Change it later 
-            this.mode = SERVER_MODE;
+            disableControls(1);  //Change it later 
+            this.mode = 1;
             serverAccepter = new ServerAccepter(Integer.parseInt(result.trim()));
             serverAccepter.start();
         }
@@ -683,8 +683,8 @@ public class Whiteboard extends JFrame{
         if (result!=null) {
             String[] parts = result.split(":");
             System.out.println("client: start");
-            disableControls(CLIENT_MODE); //Change it later 
-            this.mode = CLIENT_MODE;
+            disableControls(2); //Change it later 
+            this.mode = 2;
             clientHandler = new ClientHandler(parts[0].trim(), Integer.parseInt(parts[1].trim()));
             clientHandler.start();
         }
@@ -708,12 +708,16 @@ public class Whiteboard extends JFrame{
         SwingUtilities.invokeLater( new Runnable() {
             public void run() {
                 DShape shape = c.getShapeWithID(temp.getModel().getID()); 
-               
+             //  System.out.println(shape);
                 switch(message.getCommand()) { 
                     case Message.ADD: 
                         if(shape == null) 
+                        {
+                        	//System.out.println("I m in the if statement" + temp.getModel());
                             c.addShape(temp.getModel()); 
+                            c.repaint();
                         break; 
+                        }
                    // case Message.REMOVE:  
                     //    if(shape != null) 
                       //      canvas.markForRemoval(shape); 
