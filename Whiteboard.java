@@ -486,7 +486,7 @@ public class Whiteboard extends JFrame{
 								try {
 									temp = getModel(s);
 									//Encodes the message object into XML format 
-									Message message = new Message(Message.ADD, temp);
+									Message message = new Message(Message.add, temp);
 									OutputStream oS = new ByteArrayOutputStream();
 									XMLEncoder encoder = new XMLEncoder(oS);
 									encoder.writeObject(message); 
@@ -602,43 +602,65 @@ public class Whiteboard extends JFrame{
 		return temp;
 	}
     
+    //******************************************************************************************//
     
     	/**
     	 * Helper inner class to create message objects in terms of model type and command type
     	 */
-       public static class Message {
-        public static final int ADD = 0;
-		public static final int REMOVE = 1;
-        public static final int FRONT = 2;
-        public static final int BACK = 3;
-        public static final int CHANGE = 4;
+       	public static class Message {
+        public static final String add = "add";
+		public static final String remove = "remove";
+        public static final String front = "front";
+        public static final String back = "back";
+        public static final String change = "change";
 
-           public int command;
+           public String command;
            public DShapeModel model;
            
+           /**
+            * Default constructor to create a message object 
+            */
            public Message() { 
-               command = -1; 
+               command = null; 
                model = null; 
            }
 
-           public Message(int c, DShapeModel m) { // uncomment this stuff
-             this.model = m;
+           public Message(String c, DShapeModel m) { 
+           this.model = m;
            this.command = c;
            }
-
-           public int getCommand()
+           
+           /**
+            * Returns the command
+            * @return the command
+            */
+           public String getCommand()
            {
         	   return this.command;
 
            }
            
-           public void setCommand(int c)
+           /**
+            * Sets the command to new value
+            * @param c new command to be set
+            */
+           public void setCommand(String c)
            {
         	   this.command = c;
            }
+           
+           /**
+            * Returns the DShapeModel object used 
+            * @return DShapeModel object 
+            */
            public DShapeModel getModel() {
                return model;
            }
+           
+           /**
+            * Sets the model type to new value
+            * @param m the new value to set model type to 
+            */
            public void setModel(DShapeModel m) {
                this.model  = m;
            }
@@ -649,41 +671,42 @@ public class Whiteboard extends JFrame{
 
 	
 	
-//**********************************************************************************//
+//**************************Helper methods for networking  buttons*************************************//
 	
-       private void disableControls(int mode) {   //Change it later 
-           client.setEnabled(false); 
-           server.setEnabled(false); 
-           if(this.mode == 2) 
-           { for(JComponent comp : disableComponentIfClient) 
-           		{
-                   comp.setEnabled(false); 
-           		}
-           }
-       }
        
-	  // Starts the sever accepter to catch incoming client connections.
-    // Wired to Server button.
-    public void doServer() { //check
-       // status.setText("Start server");
-        String result = JOptionPane.showInputDialog("Run server on port", "912");
+	 /**
+	  * Method to handle server when server button is clicked
+	  * Hosts the data on a particular port
+	  */
+    public void doServer() { 
+        String result = JOptionPane.showInputDialog("Run server on port", "9128");
         if (result!=null) {
             System.out.println("server: start");
-            disableControls(1);  //Change it later 
+            client.setEnabled(false); 
+            server.setEnabled(false);
             this.mode = 1;
             serverAccepter = new ServerAccepter(Integer.parseInt(result.trim()));
             serverAccepter.start();
         }
     }
-    // Runs a client handler to connect to a server.
-    // Wired to Client button.
-    public void doClient() { //check
-       // status.setText("Start client");
-        String result = JOptionPane.showInputDialog("Connect to host:port", "127.0.0.1:912");
+   
+    /**
+     * Runs client handles to connect to server
+     * Listens from a hosting post specified
+     */
+    public void doClient() {
+       
+        String result = JOptionPane.showInputDialog("Connect to host:port", "127.0.0.1:9128");
         if (result!=null) {
             String[] parts = result.split(":");
             System.out.println("client: start");
-            disableControls(2); //Change it later 
+            client.setEnabled(false); 
+            server.setEnabled(false);
+            //Disables the controls of client
+            for(JComponent comp : disableComponentIfClient) 
+       		{
+               comp.setEnabled(false); 
+       		}
             this.mode = 2;
             clientHandler = new ClientHandler(parts[0].trim(), Integer.parseInt(parts[1].trim()));
             clientHandler.start();
@@ -691,99 +714,82 @@ public class Whiteboard extends JFrame{
     }
     
     
-    
-
-    // Adds an object stream to the list of outputs
-    // (this and sendToOutputs() are synchronzied to avoid conflicts)
+    /**
+     * Adds an object to the outputs arraylist to send to client when needed 
+     * @param out the object to be added to the list 
+     */
     public synchronized void addOutput(ObjectOutputStream out) { //check
         outputs.add(out);
     }
     
-    
-    
- // Given a message, puts that message in the local GUI.
-    // Can be called by any thread.
-    public void invokeToGUI(Message message) {
+    /**
+     * Helper method to manipulate a message in client
+     * @param message the message to be read and executed 
+     */
+    public void invokeToGUI(Message message) { //Add other functionalities 
         final Message temp = message;
         SwingUtilities.invokeLater( new Runnable() {
             public void run() {
                 DShape shape = c.getShapeWithID(temp.getModel().getID()); 
-             //  System.out.println(shape);
-                switch(message.getCommand()) { 
-                    case Message.ADD: 
+           
+                String command = message.getCommand();
+                if(command.equals("add"))
+                {
                         if(shape == null) 
                         {
-                        	//System.out.println("I m in the if statement" + temp.getModel());
                             c.addShape(temp.getModel()); 
                             c.repaint();
-                        break; 
+                         
                         }
-                   // case Message.REMOVE:  
+                }
+                   // case Message.remove:  
                     //    if(shape != null) 
                       //      canvas.markForRemoval(shape); 
                        // break; 
-                    //case Message.BACK:  
+                    //case Message.back:  
                       //  if(shape != null) 
                        //     canvas.moveToBack(shape); 
                        // break; 
-                   // case Message.FRONT:  
+                   // case Message.front:  
                      //   if(shape != null) 
                        //     canvas.moveToFront(shape); 
                         //break; 
-                    //case Message.CHANGE: 
+                    //case Message.change: 
                   //      if(shape != null) 
                           // shape.getModel().mimic(message.getModel()); 
                       //  updateTableSelection(shape); 
                        // break; 
-                    default: break; 
+                   
                 } 
-            } 
+            
         }); 
     }
  
-   /** public DShapeModel getShapeWithID(int ID) { 
-        for(DShapeModel shape : c.getModelList()) 
-            if(shape.getID() == ID) 
-                return shape; 
-        return null; 
-    } */
-
-            
-    // Initiate message send -- send both local annd remote (must be on swing thread)
-    // Wired to text field.
-    public void doSend(int command, DShapeModel m) {
+    /**
+     * Sends the message from server to client
+     * @param command the command to follow
+     * @param m the model object to be drawn
+     */
+    public void doSend(String command, DShapeModel m) {
         Message message = new Message(command,  m);
-      
-        message.setModel(m);
-         message.setCommand(command); //Change it later
-        message.setModel(m);
-       // sendLocal(message);
         sendRemote(message);
-       // field.setText("");
+       
     }
-    
-    
-    // Appends a message to the local GUI (must be on swing thread)
-    public void sendLocal(Message message) {
-     //   textArea.setText(textArea.getText() + message.getText() + "\n" + message.getDate() + "\n\n");
-    }
-    
-    
-    
-    // Sends a message to all of the outgoing streams.
-    // Writing rarely blocks, so doing this on the swing thread is ok,
-    // although could fork off a worker to do it.
+   
+    /**
+     * Sends message to all outgoing streams 
+     * @param message the message to be sent to outgoing streams
+     */
     public synchronized void sendRemote(Message message) {
-      //  status.setText("Server send");
         System.out.println("server: send " + message);
-
+        
         // Convert the message object into an xml string.
         OutputStream memStream = new ByteArrayOutputStream();
         XMLEncoder encoder = new XMLEncoder(memStream);
         encoder.writeObject(message);
         encoder.close();
         String xmlString = memStream.toString();
-        // Now write that xml string to all the clients.
+        // writing xml string to all the clients.
         Iterator<ObjectOutputStream> it = outputs.iterator();
         while (it.hasNext()) {
             ObjectOutputStream out = it.next();
@@ -794,8 +800,7 @@ public class Whiteboard extends JFrame{
             catch (Exception ex) {
                 ex.printStackTrace();
                 it.remove();
-                // Cute use of iterator and exceptions --
-                // drop that socket from list if have probs with it
+            
             }
         }
     }
@@ -808,7 +813,7 @@ public class Whiteboard extends JFrame{
 	//**************************************************************************************//
     
 	/**
-	 * To clean up the canvas
+	 * Helper method to create button to clean up the canvas 
 	 */
 	public void createClearButton()
 	{
@@ -816,24 +821,23 @@ public class Whiteboard extends JFrame{
 		clearPanel.setLayout(new BoxLayout(clearPanel, BoxLayout.LINE_AXIS));
 
 		JButton clear = new JButton("Clear Canvas");
-		clear.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
-			 public void actionPerformed(ActionEvent e) { 
-				 			c.clearCanvas();
-							 }
+		clear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				c.clearCanvas();
+			}
 
-						        
-						 });
+		});
 		clearPanel.add(Box.createRigidArea(new Dimension(5, 0)));
 
 		clearPanel.add(clear);
-		
+		disableComponentIfClient.add(clear);
 		controls.add(clearPanel);
 
 	}
 	
 
 	/**
-	 * Helper method to create a table on control panel in main gui.
+	 * Helper method to create a table on control panel in main GUI.
 	 * The table is going to be used for displaying shapes' statistics. 
 	 */
 	public void createTable()
@@ -863,7 +867,7 @@ public class Whiteboard extends JFrame{
 	      controls.add(scrollpane);
 	}
 	
-	//**********************Helper methods***************************//
+	//**********************Other Helper methods***************************//
 	
 	public String getText()
 	{

@@ -103,7 +103,7 @@ public class Canvas extends JPanel implements ModelListener{
 	{
 		if(wB.isClient() == false)
 		{
-			s.setID(Whiteboard.getIDNumber());
+			s.setID(Whiteboard.getIDNumber()); //fix the Id bug
 			modelShape.add(s);
 		}
 		
@@ -128,11 +128,10 @@ public class Canvas extends JPanel implements ModelListener{
 		//s.addListener(this);
 		shapesList.add(temp);
 		s.setColor(getColor());
-		
-		//Networking stuff // remove later if doesnt work
-		if(wB.isServer() == true)
+			
+		if(wB.getMode() == 1)
 		{
-			wB.doSend(Whiteboard.Message.ADD, s);
+			wB.doSend(Whiteboard.Message.add, s);
 		}
 		
 		
@@ -153,7 +152,7 @@ public class Canvas extends JPanel implements ModelListener{
 	 }
 	 
 	 
-	 /**
+	    /**
 		 * Override the paint component to draw the shape.
 		 */
 		public void paintComponent(Graphics g)
@@ -203,7 +202,7 @@ public class Canvas extends JPanel implements ModelListener{
 	public void modelChanged(DShapeModel model) {
 		if(wB.isServer() == true)
 		{
-			wB.doSend(Whiteboard.Message.CHANGE, model);
+			wB.doSend(Whiteboard.Message.change, model);
 		}
 		
 	}
