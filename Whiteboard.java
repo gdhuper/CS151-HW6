@@ -74,7 +74,7 @@ public class Whiteboard extends JFrame{
     JButton server, client;
     JFileChooser fileChooser = new JFileChooser();
     
-
+    ArrayList<DShapeModel> dataList = new ArrayList<DShapeModel>();
 
    
 	
@@ -202,6 +202,8 @@ public class Whiteboard extends JFrame{
 				DRectModel m = new DRectModel();
 				m.setID(getIDNumber());
 				c.addShape(m);
+				dataList.add(m);
+				
 				c.repaint();
 			}
 
@@ -212,6 +214,7 @@ public class Whiteboard extends JFrame{
 						 DOvalModel o = new DOvalModel();
 						 o.setID(getIDNumber());
 						 c.addShape(o);
+						 dataList.add(o);
 						 c.repaint();
 						
 						 }
@@ -224,6 +227,7 @@ public class Whiteboard extends JFrame{
 						 DLineModel l = new DLineModel();
 						 l.setID(getIDNumber());
 						 c.addShape(l);
+						 dataList.add(l);
 						 c.repaint();      
 						 }
 
@@ -236,6 +240,7 @@ public class Whiteboard extends JFrame{
 						 t.setID(getIDNumber());
 						 t.setTextToDraw(getText());
 						 c.setText(getText());
+						 dataList.add(t);
 						 c.addShape(t);
 						 c.repaint();
 				  
@@ -858,27 +863,39 @@ public class Whiteboard extends JFrame{
 	}
 	
 
+	
+
 	/**
 	 * Helper method to create a table on control panel in main GUI.
 	 * The table is going to be used for displaying shapes' statistics. 
 	 */
 	public void createTable()
 	{
-		
+		dataList = new ArrayList<DShapeModel>();
 		JPanel dataTable = new JPanel();
 		final String[] col = {"X", "Y", "Width", "Height"};
 		
 		TableModel dataModel = new AbstractTableModel() {
-	          public int getColumnCount() { return 4; }
+	          public int getColumnCount() { return col.length; }
+				public int getRowCount() {
+					return dataList.size();
+				}
 	          public String getColumnName(int index)
 	          {
 	        	  return col[index]; 
 	          }
-	          public int getRowCount() { return 30;}
+	         
 	          public Object getValueAt(int row, int col)
 	          { 
-	        	  return ""; 
+	        	  switch(col){
+	        	  case 0: return dataList.get(row).getX();
+	        	  case 1: return dataList.get(row).getY();
+	        	  case 2: return dataList.get(row).getWidth();
+	        	  case 3: return dataList.get(row).getHeight();
+	        	  }
+	        	  return null;
 	        }
+			
 	      };
 	     JTable table = new JTable(dataModel);
 	     table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -951,22 +968,16 @@ public class Whiteboard extends JFrame{
 	JButton menuItem = new JButton("Save PNG");	//creates the button
 
 	        menuItem.addActionListener(new ActionListener() {	//sets the button
-
-	            public void actionPerformed(ActionEvent ae) {
-
+	        public void actionPerformed(ActionEvent ae) {
 	        int setFile = fileChooser.showSaveDialog(getParent());	//sets the file
-
-	       
-
 	        if (setFile == JFileChooser.APPROVE_OPTION) {
+	        	c.saveImage(fileChooser.getSelectedFile());  // this calls the save image in canvas
 
-	        c.saveImage(fileChooser.getSelectedFile());  // this calls the save image in canvas
+				}
 
-	        }
+			}
 
-	            }
-
-	        });
+		});
 
 	        controls.add(menuItem); //adds the the panel
 

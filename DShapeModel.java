@@ -152,6 +152,22 @@ public class DShapeModel {
 			mL.modelChanged(this);
 		}
 	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
 	
 	//create a method to notify change to listeners list.
 	
