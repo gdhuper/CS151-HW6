@@ -944,37 +944,33 @@ public class Whiteboard extends JFrame{
 		}
 	}
 
-		public void saveImage()
-		{
-			JPanel saveOpen = new JPanel();
-			saveOpen.setLayout(new BoxLayout(saveOpen, BoxLayout.LINE_AXIS));
-			
-			JButton menuItem = new JButton("Save PNG");
-	        menuItem.addActionListener(new ActionListener() {
+	private void saveImage()
+
+	{
+
+	JButton menuItem = new JButton("Save PNG");	//creates the button
+
+	        menuItem.addActionListener(new ActionListener() {	//sets the button
+
 	            public void actionPerformed(ActionEvent ae) {
-	        		int setFile = fileChooser.showSaveDialog(c);
-	        														
-	        		if (setFile == JFileChooser.APPROVE_OPTION) {
-	        			 File file = (fileChooser.getSelectedFile());
-	        			 
-	                    BufferedImage image = (BufferedImage) createImage(getWidth(), getHeight());
-	                    
-	                    Graphics g = image.getGraphics();
-	                    paintAll(g);
-	   
-	                    try {
-	                        javax.imageio.ImageIO.write(image, "PNG", file);
-	                    }
-	                    catch (IOException ex) {
-	                        ex.printStackTrace();
-	                    }
-	                }
+
+	        int setFile = fileChooser.showSaveDialog(getParent());	//sets the file
+
+	       
+
+	        if (setFile == JFileChooser.APPROVE_OPTION) {
+
+	        c.saveImage(fileChooser.getSelectedFile());  // this calls the save image in canvas
+
+	        }
+
 	            }
+
 	        });
-	        controls.add(menuItem);
-	        
-			
-		}
+
+	        controls.add(menuItem); //adds the the panel
+
+	}
 }
 
 	

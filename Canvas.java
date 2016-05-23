@@ -9,6 +9,9 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.JPanel;
@@ -366,7 +369,29 @@ public class Canvas extends JPanel implements ModelListener{
 	}
 
 
+	public  void saveImage(File file)
 
+	{
+
+	        try {
+
+	          BufferedImage image = (BufferedImage) createImage(getWidth(),getHeight());    // getting the image set properly for the canvas
+
+	              Graphics g = image.getGraphics();  //get the graphics
+
+	              paintAll(g); 
+
+	            javax.imageio.ImageIO.write(image, "PNG", file); //saves the file
+
+	        }
+
+	        catch (IOException ex) {
+
+	            ex.printStackTrace();
+
+	        }
+
+	    }
 	
 	 
 	 
