@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -17,6 +18,7 @@ public class Canvas extends JPanel implements ModelListener{
 	
 	 public int oldX, oldY, oldW, oldH;	
 	 private Color color; 
+	 private DShapeModel selectedShape;
 	 Whiteboard wB;
 	 Font font;
 	 private String text;
@@ -49,27 +51,66 @@ public class Canvas extends JPanel implements ModelListener{
 		setVisible(true);
 		
 		
+		addMouseListener(new MouseAdapter()
+		{
+			public void mouseClicked(MouseEvent e)
+			{
+				mousePressed(e);
+			}
+			
+		});
+		
 		// To get the point where mouse was clicked
 		addMouseListener(new MouseAdapter() {
-	            public void mouseClicked(MouseEvent e) {
-	               mousePressed(e);
-	            }
-	        });
+			public void mousePressed(MouseEvent e) {
+				int x = e.getX();
+				int y = e.getY();
+
+				for (DShapeModel s : modelShape) {
+					Rectangle temp = s.getBounds();
+					int tempX = (int) temp.getX();
+					int tempY = (int) temp.getY();
+					int wTemp = (int) temp.getWidth();
+					int hTemp = (int) temp.getHeight();
+
+					if (x >= tempX && x <= tempY && y >= tempY && y <= tempY) {
+						s.setSelected(true);
+						selectedShape  = s; 
+						
+					}
+
+				}
+
+			}
+
+		});
 				
 		addMouseListener(new MouseAdapter() {
-            public void mousePressed(MouseEvent e) {
-               int x = e.getX();
-               int y = e.getY();
-               
-               for(DShape s: shapesList)
-               {
-            	 // to get the bouds and test it 
-               }
+            public void mouseDragged(MouseEvent e) {
+            	if(selectedShape != null)
+            	{
+            		int lastX = selectedShape.getX();
+            		int lastY = selectedShape.getY();
+            		int dx = e.getX() - lastX;
+            		int dy = e.getY() - lastY;
+            		
+            		selectedShape.moveBy(dx, dy);
+            		
+            		
+            		repaint();
+            		
+            
+            	}
             }
         });
 		
 		
 	}
+	
+	
+	
+	
+	
 	
 	
 	
@@ -103,8 +144,8 @@ public class Canvas extends JPanel implements ModelListener{
 	{
 		if(wB.isClient() == false)
 		{
-			s.setID(Whiteboard.getIDNumber()); //fix the Id bug
 			modelShape.add(s);
+			
 		}
 		
 		DShape temp = null;
@@ -175,9 +216,9 @@ public class Canvas extends JPanel implements ModelListener{
 	 */
 	public void print()
 	{
-		for(DShape m : shapesList)
+		for(DShapeModel m : modelShape)
 		{
-			System.out.println(m.getModelID());
+			System.out.println(m.getID());
 		}
 	}
 	

@@ -14,6 +14,7 @@ public class DShapeModel {
 	private Rectangle bounds;
 	private String text;
 	private int ID;
+	private boolean selected;
 	
 	private ArrayList<ModelListener> listeners;
 	
@@ -23,10 +24,10 @@ public class DShapeModel {
 	
 	public DShapeModel()
 	{
-		new	DShapeModel(X, Y, width, height);
+		new	DShapeModel(X, Y, width, height, selected, ID);
 	}
 	
-	public DShapeModel(int x, int y, int w, int h)
+	public DShapeModel(int x, int y, int w, int h, boolean selected, int ID)
 	{
 		this.X = 10;  // not sure if the x,y and width and height are supposed to be  fixed 
 		this.Y = 10;
@@ -34,7 +35,17 @@ public class DShapeModel {
 		this.height = 20; 
 		this.bounds = new Rectangle(X, Y, width, height);
 		this.c = Color.GRAY;
+		selected = false;
+		this.ID = ID;
 		listeners = new ArrayList<ModelListener>(); //For storing model listener
+	}
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
 	}
 
 	public int getX() {
@@ -83,7 +94,7 @@ public class DShapeModel {
 	 * Sets the new location of the top left coordinate
 	 * @param p the point to be set as new location 
 	 */
-	public void setPointLocation(Point p)
+	public void setPointLocation(Point p)  //set x and y method sorta!
 	{
 		bounds.setLocation(p.x, p.y);
 	}
@@ -120,6 +131,12 @@ public class DShapeModel {
 	{
 		text = s;
 		notifyChanges();
+	}
+	
+	public void moveBy(int  dx, int dy)
+	{
+		this.X += dx;
+		this.Y +=dy;
 	}
 	
 	public void mimic(DShapeModel m)

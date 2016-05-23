@@ -81,7 +81,7 @@ public class Whiteboard extends JFrame{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception ignored) {
 		}
-		for (int i = 0; i < 3; i++) {
+		for (int i = 0; i < 2; i++) {
 			new Whiteboard();
 		}
 
@@ -188,6 +188,7 @@ public class Whiteboard extends JFrame{
 		rect.addActionListener(new ActionListener() { // Added an action listener to connect to canvas and then connect canvas to DRect
 			public void actionPerformed(ActionEvent e) {
 				DRectModel m = new DRectModel();
+				m.setID(getIDNumber());
 				c.addShape(m);
 				c.repaint();
 				c.print(); // for debugging 
@@ -199,6 +200,7 @@ public class Whiteboard extends JFrame{
 				 oval.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DOval
 					 public void actionPerformed(ActionEvent e) { 
 						 DOvalModel o = new DOvalModel();
+						 o.setID(getIDNumber());
 						 c.addShape(o);
 						 c.repaint();
 						
@@ -213,6 +215,7 @@ public class Whiteboard extends JFrame{
 				 line.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DLine
 					 public void actionPerformed(ActionEvent e) { 
 						 DLineModel l = new DLineModel();
+						 l.setID(getIDNumber());
 						 c.addShape(l);
 						 c.repaint();
 
@@ -226,6 +229,7 @@ public class Whiteboard extends JFrame{
 				text.addActionListener(new ActionListener() {   // Added an action listener to connect to canvas and then connect canvas to DText
 					 public void actionPerformed(ActionEvent e) { 
 						 DTextModel t = new DTextModel();
+						 t.setID(getIDNumber());
 						 t.setTextToDraw(getText());
 						 c.setText(getText());
 						 c.addShape(t);
