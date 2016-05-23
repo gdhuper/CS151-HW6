@@ -1,15 +1,20 @@
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Shape;
 import java.util.Random;
 
 
 public class DText extends DShape  {
 
 	Font font;
+	Random random = new Random();
+	int x = random.nextInt(200);
+	int y = random.nextInt(200);
 	private String text; // text to draw
 	public DText()
 	{
 	super();
+	
 	}
 	
 	
@@ -18,8 +23,10 @@ public class DText extends DShape  {
 		
 	
 	//	g.setFont(font);
-	
-		g.drawString(getText(), 10, 10);
+		Shape clip = g.getClip();
+		Font f = getFont();
+		g.setFont(f);
+		g.drawString(getText(), x, y);
 		
 	}
 	

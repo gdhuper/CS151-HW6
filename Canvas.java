@@ -16,19 +16,22 @@ import javax.swing.JPanel;
 
 public class Canvas extends JPanel implements ModelListener{
 	
-	 public int oldX, oldY, oldW, oldH;	
+	 public int lastX, lastY, lastW, lastH;	
 	 private Color color; 
+	 public final int SIZE = 20;
 	 private DShapeModel selectedShape;
+	 private boolean print;
+	 private boolean smartRepaint;
+	 private boolean oldRepaint;
+	 private boolean dirty;
 	 Whiteboard wB;
 	 Font font;
 	 private String text;
+	 
 	 private ArrayList<DShape> shapesList = new ArrayList<DShape>();
 	 private ArrayList<DShapeModel> modelShape = new ArrayList<DShapeModel>();
 
-	 
-	 
 
-	
 	
 	public Canvas(Whiteboard w)
 	{
@@ -42,13 +45,16 @@ public class Canvas extends JPanel implements ModelListener{
 	public void createCanvas()
 	{
 		
-		//JPanel panel = new JPanel();
+		print = false;
+		smartRepaint = false;
+		oldRepaint = true;
 		
 		setBackground(Color.WHITE);
 		
 		setPreferredSize(new Dimension(400, 400));
 		setLayout(new BorderLayout());
 		setVisible(true);
+		
 		
 		
 		addMouseListener(new MouseAdapter()
@@ -66,21 +72,13 @@ public class Canvas extends JPanel implements ModelListener{
 				int x = e.getX();
 				int y = e.getY();
 
-				for (DShapeModel s : modelShape) {
-					Rectangle temp = s.getBounds();
-					int tempX = (int) temp.getX();
-					int tempY = (int) temp.getY();
-					int wTemp = (int) temp.getWidth();
-					int hTemp = (int) temp.getHeight();
-
-					if (x >= tempX && x <= tempY && y >= tempY && y <= tempY) {
-						s.setSelected(true);
-						selectedShape  = s; 
-						
-					}
-
+				DShapeModel shapeModel = findModel(x, y);
+				if(shapeModel != null)
+				{
+					selectedShape = shapeModel;
 				}
-
+				lastX = selectedShape.getX();
+				lastY = selectedShape.getY();
 			}
 
 		});
@@ -89,15 +87,17 @@ public class Canvas extends JPanel implements ModelListener{
             public void mouseDragged(MouseEvent e) {
             	if(selectedShape != null)
             	{
-            		int lastX = selectedShape.getX();
-            		int lastY = selectedShape.getY();
+            		
             		int dx = e.getX() - lastX;
             		int dy = e.getY() - lastY;
             		
+            		lastX = e.getX();
+            		lastY = e.getY();
+            		
             		selectedShape.moveBy(dx, dy);
+            		addShape(selectedShape);
             		
-            		
-            		repaint();
+            		repaint(); //
             		
             
             	}
@@ -109,8 +109,31 @@ public class Canvas extends JPanel implements ModelListener{
 	
 	
 	
+	public void doMove(DShapeModel d, int dx, int dy)
+	{
+		if(!smartRepaint)
+		{
+			d.moveBy(dx, dy);
+			repaint();
+		}
+		else
+		{
+			if(oldRepaint)
+			{
+				repaintModel(d);
+			}
+			
+			d.moveBy(dx, dy);
+			repaintModel(d);
+		}
+		setDirty(true);
+	}
 	
 	
+	public void repaintModel(DShapeModel model)
+	{
+		repaint(model.getX() - SIZE/2,  model.getY() - SIZE/2,  SIZE + 1 , SIZE + 1 );
+	}
 	
 	
 	
@@ -146,6 +169,7 @@ public class Canvas extends JPanel implements ModelListener{
 		{
 			modelShape.add(s);
 			
+			
 		}
 		
 		DShape temp = null;
@@ -174,11 +198,33 @@ public class Canvas extends JPanel implements ModelListener{
 		{
 			wB.doSend(Whiteboard.Message.add, s);
 		}
-		
+		s.addListener(this);
+	
 		
 		
 	}
 	
+	
+	public DShapeModel findModel(int x, int y)
+	{
+		for(int i = modelShape.size() -1 ; i >=0; i-- )
+		{
+			DShapeModel temp = modelShape.get(i);
+			Rectangle bounds = temp.getBounds();
+			int centerX = (int) bounds.getX();
+			int centerY = (int) bounds.getY();
+			
+			int wTemp =  (int) bounds.getWidth();
+			int hTemp = ( int) bounds.getHeight();
+
+			if (x >= centerX && x <= wTemp && y >= centerY && y <= hTemp)
+			{
+				return temp;
+			}
+			
+		}
+		return null;
+	}
 
 	 public DShape getShapeWithID(int ID)
 	 {
@@ -247,6 +293,87 @@ public class Canvas extends JPanel implements ModelListener{
 		}
 		
 	}
+	
+	
+	
+	
+
+	 public boolean isDirty() {
+		return dirty;
+	}
+
+
+
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+
+
+
+
+	public DShapeModel getSelectedShape() {
+		return selectedShape;
+	}
+
+
+
+
+	public void setSelectedShape(DShapeModel selectedShape) {
+		this.selectedShape = selectedShape;
+	}
+
+
+
+
+	public boolean isPrint() {
+		return print;
+	}
+
+
+
+
+	public void setPrint(boolean print) {
+		this.print = print;
+	}
+
+
+
+
+	public boolean isSmartRepaint() {
+		return smartRepaint;
+	}
+
+
+
+
+	public void setSmartRepaint(boolean smartRepaint) {
+		this.smartRepaint = smartRepaint;
+	}
+
+
+
+
+	public boolean isOldRepaint() {
+		return oldRepaint;
+	}
+
+
+
+
+	public void setOldRepaint(boolean oldRepaint) {
+		this.oldRepaint = oldRepaint;
+	}
+
+
+
+	
+	 
+	 
+	
+	 
+	 
+
 	
 	
 	

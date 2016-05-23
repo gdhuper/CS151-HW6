@@ -5,6 +5,9 @@ import java.util.Random;
 
 public class DOval extends DShape  {
 	
+	Random random = new Random();
+	int x = random.nextInt(200);
+	int y = random.nextInt(200);
 	
 	public DOval()
 	{
@@ -25,7 +28,7 @@ public class DOval extends DShape  {
 	{
 		g.setColor(getColor());
 
-		g.fillOval(10, 10, 20, 20);
+		g.fillOval(x, y, 20, 20);
 	}
 
 }

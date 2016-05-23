@@ -7,7 +7,9 @@ public class DRect extends DShape {
 	
 	
 
-	
+	Random random = new Random();
+	int x = random.nextInt(200);
+	int y = random.nextInt(200);
 	public DRect(){
 		super();
 	}
@@ -27,7 +29,7 @@ public class DRect extends DShape {
 		
 		g.setColor(getColor());
 
-		g.fillRect(10, 10, 20, 20);
+		g.fillRect(x, y,  20,  20);
 	}
 
 }

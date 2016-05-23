@@ -1,5 +1,4 @@
 
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -9,10 +8,16 @@ import java.awt.Graphics;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,6 +33,7 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -66,6 +72,7 @@ public class Whiteboard extends JFrame{
             new ArrayList<ObjectOutputStream>();
     private ArrayList<JComponent> disableComponentIfClient = new ArrayList<JComponent>();
     JButton server, client;
+    JFileChooser fileChooser = new JFileChooser();
     
 
 
@@ -146,7 +153,12 @@ public class Whiteboard extends JFrame{
 
 		createClearButton();
 		controls.add(Box.createRigidArea(new Dimension(0,20)));
-
+		
+		createSaveOpenButtons();
+		controls.add(Box.createRigidArea(new Dimension(0,20)));
+		
+		saveImage();
+		controls.add(Box.createRigidArea(new Dimension(0,20)));
 
 		createTable();  //Creates a table to display statistics
 		//*********************************************************************************************//
@@ -191,8 +203,6 @@ public class Whiteboard extends JFrame{
 				m.setID(getIDNumber());
 				c.addShape(m);
 				c.repaint();
-				c.print(); // for debugging 
-
 			}
 
 		});
@@ -204,9 +214,6 @@ public class Whiteboard extends JFrame{
 						 c.addShape(o);
 						 c.repaint();
 						
-					 c.print(); //For debugging 
-						
-						           
 						 }
 
 					        
@@ -217,10 +224,7 @@ public class Whiteboard extends JFrame{
 						 DLineModel l = new DLineModel();
 						 l.setID(getIDNumber());
 						 c.addShape(l);
-						 c.repaint();
-
-						 c.print(); //for debugging
-						           
+						 c.repaint();      
 						 }
 
 					        
@@ -234,9 +238,7 @@ public class Whiteboard extends JFrame{
 						 c.setText(getText());
 						 c.addShape(t);
 						 c.repaint();
-						 
-						 c.print(); //for debugging
-						           
+				  
 					 	}      
 					 });
 				
@@ -269,6 +271,50 @@ public class Whiteboard extends JFrame{
 				controls.add(addButtons); //Adds button to main controls panel 
 	
 	}
+	
+	/**
+	 * Create the save and open 
+	 */
+	public void createSaveOpenButtons()
+	{
+		JPanel saveOpen = new JPanel();
+		saveOpen.setLayout(new BoxLayout(saveOpen, BoxLayout.LINE_AXIS));
+		
+		JButton save = new JButton("Save");
+		save.addActionListener(new ActionListener() {   // Added an action listener to connect to clear the canvas 
+			 public void actionPerformed(ActionEvent e) {           
+				
+					save();    
+					repaint();
+					
+				 }      
+			 });     
+		//this.add(menuItem);
+		
+				 
+				 JButton open = new JButton("Open");
+		open.addActionListener(new ActionListener() {  
+		     public void actionPerformed(ActionEvent e) { 
+			           
+				               
+				 open();
+				 repaint();
+				 }
+		     
+			});
+
+		saveOpen.add(Box.createRigidArea(new Dimension(5, 0)));
+
+		saveOpen.add(save);
+		saveOpen.add(Box.createRigidArea(new Dimension(5, 0)));
+
+		saveOpen.add(open);
+		saveOpen.add(Box.createRigidArea(new Dimension(5, 0)));
+
+
+		controls.add(saveOpen);
+	}
+
 	
 	/**
 	 * Helper method to create set color button in main GUI
@@ -308,35 +354,25 @@ public class Whiteboard extends JFrame{
 		JPanel script = new JPanel();
 		script.setLayout(new BoxLayout(script, BoxLayout.LINE_AXIS));
 
-		JTextField textField = new JTextField("Enter text here...");
+		final JTextField textField = new JTextField("Enter text here...");
 		script.add(Box.createRigidArea(new Dimension(5, 0)));
-		textField.getDocument().addDocumentListener(new DocumentListener() // Fix Listening problem
-        {
-
-            public void changedUpdate(DocumentEvent arg0) 
-            {
-
-            }
-            public void insertUpdate(DocumentEvent arg0) 
-            {
-            	String text = textField.getText(); //Wont work when updated text
-				setText(text);
+		textField.addActionListener(new ActionListener() {  
+			public void actionPerformed(ActionEvent e) {
+				String t = textField.getText();
+				setText(t);
+				textField.selectAll();
 				
-            }
+				}
 
-            public void removeUpdate(DocumentEvent arg0) 
-            {
-            	String text = textField.getText();
-				setText(text);
-				
-            }
-        });
+			
+
+		});
 
 
 		GraphicsEnvironment ge = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		String fonts[] = ge.getAvailableFontFamilyNames();
-		JComboBox fontType = new JComboBox(fonts);
+		final JComboBox fontType = new JComboBox(fonts);
 		fontType.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Font f = (Font) fontType.getSelectedItem();
@@ -730,7 +766,7 @@ public class Whiteboard extends JFrame{
      * Helper method to manipulate a message in client
      * @param message the message to be read and executed 
      */
-    public void invokeToGUI(Message message) { //Add other functionalities 
+    public void invokeToGUI(final Message message) { //Add other functionalities 
         final Message temp = message;
         SwingUtilities.invokeLater( new Runnable() {
             public void run() {
@@ -746,24 +782,6 @@ public class Whiteboard extends JFrame{
                          
                         }
                 }
-                   // case Message.remove:  
-                    //    if(shape != null) 
-                      //      canvas.markForRemoval(shape); 
-                       // break; 
-                    //case Message.back:  
-                      //  if(shape != null) 
-                       //     canvas.moveToBack(shape); 
-                       // break; 
-                   // case Message.front:  
-                     //   if(shape != null) 
-                       //     canvas.moveToFront(shape); 
-                        //break; 
-                    //case Message.change: 
-                  //      if(shape != null) 
-                          // shape.getModel().mimic(message.getModel()); 
-                      //  updateTableSelection(shape); 
-                       // break; 
-                   
                 } 
             
         }); 
@@ -848,9 +866,8 @@ public class Whiteboard extends JFrame{
 	{
 		
 		JPanel dataTable = new JPanel();
-		String[] col = {"X", "Y", "Width", "Height"};
-		//DefaultTableModel model = new DefaultTableModel();
-		//model.setColumnIdentifiers(col); 
+		final String[] col = {"X", "Y", "Width", "Height"};
+		
 		TableModel dataModel = new AbstractTableModel() {
 	          public int getColumnCount() { return 4; }
 	          public String getColumnName(int index)
@@ -864,6 +881,7 @@ public class Whiteboard extends JFrame{
 	        }
 	      };
 	     JTable table = new JTable(dataModel);
+	     table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 	      JScrollPane scrollpane = new JScrollPane(table);
 	      dataTable.add(scrollpane);
 	      
@@ -883,4 +901,81 @@ public class Whiteboard extends JFrame{
 		textToPrint = s;
 	}
 	
+	
+	public void save() {
+		int setFile = fileChooser.showSaveDialog(this);   // Sets file that will be saved
+		if (setFile == JFileChooser.APPROVE_OPTION) {
+			File file = (fileChooser.getSelectedFile());	//Sets the file
+			try {
+				XMLEncoder xmlOut = new XMLEncoder(new BufferedOutputStream(
+						new FileOutputStream(file)));	//Stream File information
+				DShapeModel[] shape = c.getModelList().toArray(
+						new DShapeModel[0]);	// loads the data to the DShapeModel type array
+
+				xmlOut.writeObject(shape);	//Writes the information
+				xmlOut.close();		
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void open() {
+
+		int setFile = fileChooser.showOpenDialog(this);
+														
+		if (setFile == JFileChooser.APPROVE_OPTION) {
+			 File file = (fileChooser.getSelectedFile());
+			try {
+				XMLDecoder xmlIn = new XMLDecoder(new BufferedInputStream(
+						new FileInputStream(file)));
+
+				DShapeModel[] shape = (DShapeModel[]) xmlIn.readObject(); //Reads the file into the array
+				xmlIn.close();
+				c.clearCanvas();
+				for (DShapeModel s : shape) { //loads the shape information into the main arraylist 
+					c.addShape(s);
+					c.repaint();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+		public void saveImage()
+		{
+			JPanel saveOpen = new JPanel();
+			saveOpen.setLayout(new BoxLayout(saveOpen, BoxLayout.LINE_AXIS));
+			
+			JButton menuItem = new JButton("Save PNG");
+	        menuItem.addActionListener(new ActionListener() {
+	            public void actionPerformed(ActionEvent ae) {
+	        		int setFile = fileChooser.showSaveDialog(c);
+	        														
+	        		if (setFile == JFileChooser.APPROVE_OPTION) {
+	        			 File file = (fileChooser.getSelectedFile());
+	        			 
+	                    BufferedImage image = (BufferedImage) createImage(getWidth(), getHeight());
+	                    
+	                    Graphics g = image.getGraphics();
+	                    paintAll(g);
+	   
+	                    try {
+	                        javax.imageio.ImageIO.write(image, "PNG", file);
+	                    }
+	                    catch (IOException ex) {
+	                        ex.printStackTrace();
+	                    }
+	                }
+	            }
+	        });
+	        controls.add(menuItem);
+	        
+			
+		}
 }
+
+	
+	

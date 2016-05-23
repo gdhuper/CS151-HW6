@@ -16,7 +16,7 @@ public class DShapeModel {
 	private int ID;
 	private boolean selected;
 	
-	private ArrayList<ModelListener> listeners;
+	private ArrayList<ModelListener> listeners = new ArrayList<ModelListener>();
 	
 
 
@@ -55,6 +55,7 @@ public class DShapeModel {
 
 	public void setX(int newX) {
 		X = newX;
+		notifyChanges();
 	}
 
 	public int getID()
@@ -64,7 +65,7 @@ public class DShapeModel {
 	
 	public void setID(int id)
 	{
-		this.ID = id;
+		this.ID = id; 
 	}
 
 	public int getY() {
@@ -135,17 +136,14 @@ public class DShapeModel {
 	
 	public void moveBy(int  dx, int dy)
 	{
-		this.X += dx;
-		this.Y +=dy;
+	
+		this.setX(dx);
+		this.setY(dy);
+		
+		notifyChanges();
 	}
 	
-	public void mimic(DShapeModel m)
-	{
-		setID(m.getID());
-		setBounds(m.getBounds());
-		setColor(m.getColor());
-		notifyChanges(); 
-	}
+
 	
 	
 	public void notifyChanges() {
