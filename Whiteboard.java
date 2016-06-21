@@ -102,6 +102,7 @@ public class Whiteboard extends JFrame{
 		{
 		
 		showGUI();
+		System.out.println("I am here");
 		
 		}
 	
