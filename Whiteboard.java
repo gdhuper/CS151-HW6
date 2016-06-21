@@ -90,7 +90,7 @@ public class Whiteboard extends JFrame{
 		}
 		for (int i = 0; i < 2; i++) {
 			new Whiteboard();
-		}
+		}   
 
 	}
 	
@@ -747,7 +747,7 @@ public class Whiteboard extends JFrame{
             System.out.println("client: start");
             client.setEnabled(false); 
             server.setEnabled(false);
-            //Disables the controls of client
+            //Disables the controls of clienst
             for(JComponent comp : disableComponentIfClient) 
        		{
                comp.setEnabled(false); 
@@ -873,7 +873,8 @@ public class Whiteboard extends JFrame{
 	{
 		dataList = new ArrayList<DShapeModel>();
 		JPanel dataTable = new JPanel();
-		final String[] col = {"X", "Y", "Width", "Height"};
+		TableData table = new TableData();
+	/**	final String[] col = {"X", "Y", "Width", "Height"};
 		
 		TableModel dataModel = new AbstractTableModel() {
 	          public int getColumnCount() { return col.length; }
@@ -896,14 +897,54 @@ public class Whiteboard extends JFrame{
 	        	  return null;
 	        }
 			
-	      };
-	     JTable table = new JTable(dataModel);
-	     table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-	      JScrollPane scrollpane = new JScrollPane(table);
+	      };*/
+	     JTable Table = new JTable(table);
+	     Table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+	      JScrollPane scrollpane = new JScrollPane(Table);
 	      dataTable.add(scrollpane);
 	      
-	      table.setFillsViewportHeight(true);
+	      Table.setFillsViewportHeight(true);
 	      controls.add(scrollpane);
+	}
+	
+	public class TableData extends AbstractTableModel
+	{
+		final String[] col = {"X", "Y", "Width", "Height"};
+		
+
+		public TableData()
+		{
+			dataList = new ArrayList<DShapeModel>();
+		}
+		@Override
+		public int getColumnCount() {
+			return col.length;
+		}
+		
+		public void addModel(DShapeModel m)
+		{
+			dataList.add(m);
+			fireTableRowsInserted(dataList.size()- 1, dataList.size() -1);
+		}
+
+		@Override
+		public int getRowCount() {
+			return dataList.size();
+		}
+
+		@Override
+		public Object getValueAt(int row, int col)
+        { 
+      	  switch(col){
+      	  case 0: return dataList.get(row).getX();
+      	  case 1: return dataList.get(row).getY();
+      	  case 2: return dataList.get(row).getWidth();
+      	  case 3: return dataList.get(row).getHeight();
+      	  }
+      	  return null;
+      
+		}
+		
 	}
 	
 	//**********************Other Helper methods***************************//
